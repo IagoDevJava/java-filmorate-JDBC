@@ -106,6 +106,21 @@ class UserControllerTest {
     }
 
     @Test
+    void isValidNameUserNull() throws ValidationException {
+        expectedUser = User.builder()
+                .login("login")
+                .email("user@yandex.ru")
+                .birthday(LocalDate.parse("2000-12-12"))
+                .build();
+
+        userController.addUser(expectedUser);
+        User actualUser = userController.getUsers().get(0);
+
+        assertEquals(expectedUser.getName(), actualUser.getName(),
+                "Пустой логин не заменен на имя пользователя");
+    }
+
+    @Test
     void isValidNameUserEmpty() throws ValidationException {
         expectedUser = User.builder()
                 .name("")

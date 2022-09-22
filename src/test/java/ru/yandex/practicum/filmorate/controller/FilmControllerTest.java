@@ -19,7 +19,7 @@ class FilmControllerTest {
                 .name("film")
                 .description("descTest")
                 .releaseDate(LocalDate.now())
-                .duration(Duration.ofHours(1))
+                .duration(120)
                 .build();
         filmControllerTest.addFilm(expectedFilm);
 
@@ -34,7 +34,7 @@ class FilmControllerTest {
                 .name("")
                 .description("descTest")
                 .releaseDate(LocalDate.now())
-                .duration(Duration.ofHours(1))
+                .duration(120)
                 .build();
 
         Throwable thrown = assertThrows(ValidationException.class, () -> {
@@ -49,7 +49,7 @@ class FilmControllerTest {
                 .name(" ")
                 .description("descTest")
                 .releaseDate(LocalDate.now())
-                .duration(Duration.ofHours(1))
+                .duration(120)
                 .build();
 
         Throwable thrown = assertThrows(ValidationException.class, () -> {
@@ -65,7 +65,7 @@ class FilmControllerTest {
                 .name("film1")
                 .description(expectedDescription)
                 .releaseDate(LocalDate.now())
-                .duration(Duration.ofHours(1))
+                .duration(120)
                 .build();
 
         Throwable thrown = assertThrows(ValidationException.class, () -> {
@@ -80,7 +80,7 @@ class FilmControllerTest {
                 .name("film1")
                 .description("desc1")
                 .releaseDate(LocalDate.parse("1895-12-26"))
-                .duration(Duration.ofHours(1))
+                .duration(120)
                 .build();
 
         Throwable thrown = assertThrows(ValidationException.class, () -> {
@@ -95,7 +95,7 @@ class FilmControllerTest {
                 .name("film1")
                 .description("desc1")
                 .releaseDate(LocalDate.parse("1895-12-28"))
-                .duration(Duration.ofHours(-1))
+                .duration(-120)
                 .build();
 
         Throwable thrown = assertThrows(ValidationException.class, () -> {
