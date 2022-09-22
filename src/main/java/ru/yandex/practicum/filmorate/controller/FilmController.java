@@ -31,7 +31,7 @@ public class FilmController {
     /**
      * добавление фильма в список
      */
-    @PostMapping("/film")
+    @PostMapping()
     public Film addFilm(@RequestBody Film film) throws ValidationException {
         isValidFilms(film);
         log.debug("Сохранили: {}", film);
@@ -42,7 +42,7 @@ public class FilmController {
     /**
      * обновление фильма в списке
      */
-    @PutMapping("/film")
+    @PutMapping()
     public Film updateFilm(@RequestBody Film film) throws ValidationException {
         isValidFilms(film);
         log.debug("Обновили: {}", film);
@@ -57,22 +57,22 @@ public class FilmController {
         if (film.getName().isBlank()) {
             log.warn("Ошибка в названии: {}", film);
             throw new ValidationException("Фильм не соответствует условиям: " +
-                    "- название не должно быть пустым");
+                    "название не должно быть пустым");
         }
         if (film.getDescription().length() > 200) {
             log.warn("Ошибка в описании: {}", film);
             throw new ValidationException("Фильм не соответствует условиям: " +
-                    "- длина описания не может быть больше 200 символов");
+                    "длина описания не может быть больше 200 символов");
         }
         if (film.getReleaseDate().isBefore(LocalDate.parse("1895-12-27"))) {
             log.warn("Ошибка в дате релиза: {}", film);
             throw new ValidationException("Фильм не соответствует условиям: " +
-                    "- дата релиза не может быть раньше 28 декабря 1895 года");
+                    "дата релиза не может быть раньше 28 декабря 1895 года");
         }
         if (film.getDuration().isNegative()) {
             log.warn("Ошибка в продолжительности: {}", film);
             throw new ValidationException("Фильм не соответствует условиям: " +
-                    "- продолжительность фильма не может быть отрицательной");
+                    "продолжительность фильма не может быть отрицательной");
         }
     }
 }

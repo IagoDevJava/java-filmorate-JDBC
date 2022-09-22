@@ -125,20 +125,20 @@ class UserControllerTest {
         assertNotNull(thrown.getMessage());
     }
 
-    @Test
-    void isValidNameUserNull() {
-        expectedUser = User.builder()
-                .id(1)
-                .login("login")
-                .email("user@yandex.ru")
-                .birthday(LocalDate.parse("2000-12-12"))
-                .build();
-
-        Throwable thrown = assertThrows(NullPointerException.class, () -> {
-            userController.addUser(expectedUser);
-        });
-        assertNotNull(thrown.getMessage());
-    }
+//    @Test
+//    void isValidNameUserNull() {
+//        expectedUser = User.builder()
+//                .id(1)
+//                .login("login")
+//                .email("user@yandex.ru")
+//                .birthday(LocalDate.parse("2000-12-12"))
+//                .build();
+//
+//        Throwable thrown = assertThrows(NullPointerException.class, () -> {
+//            userController.addUser(expectedUser);
+//        });
+//        assertNotNull(thrown.getMessage());
+//    }
 
     @Test
     void isValidNameUserBlank() throws ValidationException {
@@ -172,9 +172,9 @@ class UserControllerTest {
     void isValidBirthdayUserNull() {
         expectedUser = User.builder()
                 .id(1)
+                .name("user")
                 .login("login")
                 .email("user@yandex.ru")
-                .birthday(LocalDate.now().plusDays(1))
                 .build();
 
         Throwable thrown = assertThrows(NullPointerException.class, () -> {
