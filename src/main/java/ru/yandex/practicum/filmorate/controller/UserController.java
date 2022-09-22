@@ -7,23 +7,21 @@ import ru.yandex.practicum.filmorate.model.User;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @Slf4j
 @RequestMapping("/users")
 public class UserController {
 
-    private final Map<Integer, User> users = new HashMap<>();
+    private final List<User> users = new ArrayList<>();
 
     /**
      * получение списка пользователей
      */
     @GetMapping
     public List<User> getUsers() {
-        return new ArrayList<>(users.values());
+        return users;
     }
 
     /**
@@ -33,7 +31,7 @@ public class UserController {
     public User addUser(@RequestBody User user) throws ValidationException {
         isValidUsers(user);
         log.debug("Сохранили: {}", user);
-        users.put(user.getId(), user);
+        users.add(user);
         return user;
     }
 
@@ -44,7 +42,7 @@ public class UserController {
     public User updateUser(@RequestBody User user) throws ValidationException {
         isValidUsers(user);
         log.debug("Обновили: {}", user);
-        users.put(user.getId(), user);
+        users.add(user);
         return user;
     }
 

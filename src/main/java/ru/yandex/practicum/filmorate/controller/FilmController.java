@@ -7,9 +7,7 @@ import ru.yandex.practicum.filmorate.model.Film;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 @RestController
 @Slf4j
@@ -18,14 +16,14 @@ public class FilmController {
     /**
      * Хранение списка добавленных фильмов
      */
-    private final Set<Film> films = new HashSet<>();
+    private final List<Film> films = new ArrayList<>();
 
     /**
      * получение всех фильмов
      */
     @GetMapping
     public List<Film> getFilms() {
-        return new ArrayList<>(films);
+        return films;
     }
 
     /**

@@ -18,7 +18,6 @@ class UserControllerTest {
     @Test
     void isValidUser() throws ValidationException {
         expectedUser = User.builder()
-                .id(1)
                 .name("user")
                 .login("login")
                 .email("user@yandex.ru")
@@ -34,14 +33,12 @@ class UserControllerTest {
     @Test
     void isValidEmailUserBlank() {
         expectedUser = User.builder()
-                .id(1)
                 .name("user")
                 .login("login")
                 .email(" ")
                 .birthday(LocalDate.parse("2000-12-12"))
                 .build();
         expectedUser1 = User.builder()
-                .id(2)
                 .name("user")
                 .login("login")
                 .email("")
@@ -58,7 +55,6 @@ class UserControllerTest {
     @Test
     void isValidEmailWithSpecialSymbol() {
         expectedUser = User.builder()
-                .id(1)
                 .name("user")
                 .login("login")
                 .email("useryandex.ru")
@@ -74,14 +70,12 @@ class UserControllerTest {
     @Test
     void isValidLoginUserBlank() {
         expectedUser = User.builder()
-                .id(1)
                 .name("user")
                 .login("")
                 .email("user@yandex.ru")
                 .birthday(LocalDate.parse("2000-12-12"))
                 .build();
         expectedUser1 = User.builder()
-                .id(2)
                 .name("user")
                 .login(" ")
                 .email("user@yandex.ru")
@@ -98,35 +92,38 @@ class UserControllerTest {
     @Test
     void isValidNameUserBlank() throws ValidationException {
         expectedUser = User.builder()
-                .id(1)
-                .name("")
-                .login("login")
-                .email("user@yandex.ru")
-                .birthday(LocalDate.parse("2000-12-12"))
-                .build();
-        expectedUser1 = User.builder()
-                .id(2)
                 .name(" ")
-                .login("login1")
+                .login("login")
                 .email("user@yandex.ru")
                 .birthday(LocalDate.parse("2000-12-12"))
                 .build();
 
         userController.addUser(expectedUser);
-        userController.addUser(expectedUser1);
         User actualUser = userController.getUsers().get(0);
-        User actualUser1 = userController.getUsers().get(1);
 
         assertEquals(expectedUser.getName(), actualUser.getName(),
                 "Пустой логин не заменен на имя пользователя");
-        assertEquals(expectedUser1.getName(), actualUser1.getName(),
+    }
+
+    @Test
+    void isValidNameUserEmpty() throws ValidationException {
+        expectedUser = User.builder()
+                .name("")
+                .login("login")
+                .email("user@yandex.ru")
+                .birthday(LocalDate.parse("2000-12-12"))
+                .build();
+
+        userController.addUser(expectedUser);
+        User actualUser = userController.getUsers().get(0);
+
+        assertEquals(expectedUser.getName(), actualUser.getName(),
                 "Пустой логин не заменен на имя пользователя");
     }
 
     @Test
     void isValidBirthdayUser() {
         expectedUser = User.builder()
-                .id(1)
                 .name("user")
                 .login("login")
                 .email("user@yandex.ru")
