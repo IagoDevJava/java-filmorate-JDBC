@@ -29,20 +29,6 @@ class FilmControllerTest {
     }
 
     @Test
-    void isValidNameFilmsNull() {
-        expectedFilm = Film.builder()
-                .description("descTest")
-                .releaseDate(LocalDate.now())
-                .duration(Duration.ofHours(1))
-                .build();
-
-        Throwable thrown = assertThrows(NullPointerException.class, () -> {
-            filmControllerTest.addFilm(expectedFilm);
-        });
-        assertNotNull(thrown.getMessage());
-    }
-
-    @Test
     void isValidNameFilmsBlank() {
         expectedFilm = Film.builder()
                 .name("")
@@ -73,20 +59,6 @@ class FilmControllerTest {
     }
 
     @Test
-    void isValidDescriptionFilmsNull() {
-        expectedFilm = Film.builder()
-                .name("film")
-                .releaseDate(LocalDate.now())
-                .duration(Duration.ofHours(1))
-                .build();
-
-        Throwable thrown = assertThrows(NullPointerException.class, () -> {
-            filmControllerTest.addFilm(expectedFilm);
-        });
-        assertNotNull(thrown.getMessage());
-    }
-
-    @Test
     void isValidDescriptionFilmsMore200() {
         String expectedDescription = "A" + "a".repeat(200);
         expectedFilm = Film.builder()
@@ -103,20 +75,6 @@ class FilmControllerTest {
     }
 
     @Test
-    void isValidReleaseDateFilmsNull() {
-        expectedFilm = Film.builder()
-                .name("film")
-                .description("description")
-                .duration(Duration.ofHours(1))
-                .build();
-
-        Throwable thrown = assertThrows(NullPointerException.class, () -> {
-            filmControllerTest.addFilm(expectedFilm);
-        });
-        assertNotNull(thrown.getMessage());
-    }
-
-    @Test
     void isValidReleaseDateFilms() {
         expectedFilm = Film.builder()
                 .name("film1")
@@ -126,20 +84,6 @@ class FilmControllerTest {
                 .build();
 
         Throwable thrown = assertThrows(ValidationException.class, () -> {
-            filmControllerTest.addFilm(expectedFilm);
-        });
-        assertNotNull(thrown.getMessage());
-    }
-
-    @Test
-    void isValidDurationFilmsNull() {
-        expectedFilm = Film.builder()
-                .name("film")
-                .description("description")
-                .releaseDate(LocalDate.now())
-                .build();
-
-        Throwable thrown = assertThrows(NullPointerException.class, () -> {
             filmControllerTest.addFilm(expectedFilm);
         });
         assertNotNull(thrown.getMessage());

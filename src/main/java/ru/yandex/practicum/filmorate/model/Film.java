@@ -11,8 +11,8 @@ import java.time.LocalDate;
 @Builder
 public class Film {
     private int id;
-    private String name;
-    private String description;
-    private LocalDate releaseDate;
-    private Duration duration;
+    @NonNull private String name;
+    @NonNull private String description;
+    @NonNull private LocalDate releaseDate;
+    @NonNull private Duration duration;
 }

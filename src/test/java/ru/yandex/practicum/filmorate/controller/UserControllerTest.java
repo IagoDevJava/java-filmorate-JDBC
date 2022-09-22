@@ -32,21 +32,6 @@ class UserControllerTest {
     }
 
     @Test
-    void isValidEmailUserNull() {
-        expectedUser = User.builder()
-                .id(1)
-                .name("user")
-                .login("login")
-                .birthday(LocalDate.parse("2000-12-12"))
-                .build();
-
-        Throwable thrown = assertThrows(NullPointerException.class, () -> {
-            userController.addUser(expectedUser);
-        });
-        assertNotNull(thrown.getMessage());
-    }
-
-    @Test
     void isValidEmailUserBlank() {
         expectedUser = User.builder()
                 .id(1)
@@ -87,21 +72,6 @@ class UserControllerTest {
     }
 
     @Test
-    void isValidLoginUserNull() {
-        expectedUser = User.builder()
-                .id(1)
-                .name("user")
-                .email("user@yandex.ru")
-                .birthday(LocalDate.parse("2000-12-12"))
-                .build();
-
-        Throwable thrown = assertThrows(NullPointerException.class, () -> {
-            userController.addUser(expectedUser);
-        });
-        assertNotNull(thrown.getMessage());
-    }
-
-    @Test
     void isValidLoginUserBlank() {
         expectedUser = User.builder()
                 .id(1)
@@ -124,21 +94,6 @@ class UserControllerTest {
         });
         assertNotNull(thrown.getMessage());
     }
-
-//    @Test
-//    void isValidNameUserNull() {
-//        expectedUser = User.builder()
-//                .id(1)
-//                .login("login")
-//                .email("user@yandex.ru")
-//                .birthday(LocalDate.parse("2000-12-12"))
-//                .build();
-//
-//        Throwable thrown = assertThrows(NullPointerException.class, () -> {
-//            userController.addUser(expectedUser);
-//        });
-//        assertNotNull(thrown.getMessage());
-//    }
 
     @Test
     void isValidNameUserBlank() throws ValidationException {
@@ -166,21 +121,6 @@ class UserControllerTest {
                 "Пустой логин не заменен на имя пользователя");
         assertEquals(expectedUser1.getName(), actualUser1.getName(),
                 "Пустой логин не заменен на имя пользователя");
-    }
-
-    @Test
-    void isValidBirthdayUserNull() {
-        expectedUser = User.builder()
-                .id(1)
-                .name("user")
-                .login("login")
-                .email("user@yandex.ru")
-                .build();
-
-        Throwable thrown = assertThrows(NullPointerException.class, () -> {
-            userController.addUser(expectedUser);
-        });
-        assertNotNull(thrown.getMessage());
     }
 
     @Test
