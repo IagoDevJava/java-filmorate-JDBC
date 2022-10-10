@@ -6,7 +6,6 @@ import ru.yandex.practicum.filmorate.exeptions.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.validator.UserValidator;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -57,7 +56,7 @@ public class UserController {
 
     /**
      * создание уникадбного id пользователя
-     * */
+     */
     private int generateIdUsers() {
         return ++idUser;
     }
