@@ -1,18 +1,19 @@
 package ru.yandex.practicum.filmorate.validator;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.RequestBody;
+import ru.yandex.practicum.filmorate.exeptions.NotFoundUserException;
 import ru.yandex.practicum.filmorate.exeptions.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Slf4j
 public class UserValidator {
     /**
-     * Валидация пользователей
+     * Валидация имени пользователей
      */
-    public static void isValidUsers(@RequestBody User user) throws ValidationException {
+    public static void isValidNameUsers(User user) throws ValidationException {
         if (user.getEmail().isBlank()) {
             log.warn("Ошибка в email: {}", user);
             throw new ValidationException("Пользователь не соответствует условиям: " +
@@ -36,6 +37,21 @@ public class UserValidator {
             log.warn("Ошибка в дате рождения: {}", user);
             throw new ValidationException("Пользователь не соответствует условиям: " +
                     "дата рождения не может быть в будущем");
+        }
+    }
+
+    /**
+     * Валидация id пользователей
+     */
+    public static void isValidIdUsers(int id) {
+        if (id < 0) {
+            throw new NotFoundUserException(String.format("Id пользователя {} отрицательный", id));
+        }
+    }
+
+    public static void isUserByUsers(List<User> users, User user) {
+        if (!users.contains(user)) {
+            throw new NotFoundUserException(String.format("Пользователь № %d не найден", user.getId()));
         }
     }
 }

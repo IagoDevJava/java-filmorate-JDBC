@@ -3,6 +3,8 @@ package ru.yandex.practicum.filmorate.controller;
 import org.junit.jupiter.api.Test;
 import ru.yandex.practicum.filmorate.exeptions.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.service.FilmService;
+import ru.yandex.practicum.filmorate.storage.InMemoryFilmStorage;
 
 import java.time.Duration;
 import java.time.LocalDate;
@@ -10,7 +12,9 @@ import java.time.LocalDate;
 import static org.junit.jupiter.api.Assertions.*;
 
 class FilmControllerTest {
-    FilmController filmControllerTest = new FilmController();
+    InMemoryFilmStorage inMemoryFilmStorage = new InMemoryFilmStorage();
+    FilmService filmService = new FilmService(inMemoryFilmStorage);
+    FilmController filmControllerTest = new FilmController(filmService);
     Film expectedFilm;
 
     @Test

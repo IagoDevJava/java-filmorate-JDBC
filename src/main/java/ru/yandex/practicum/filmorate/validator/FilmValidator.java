@@ -2,10 +2,13 @@ package ru.yandex.practicum.filmorate.validator;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.RequestBody;
+import ru.yandex.practicum.filmorate.exeptions.NotFoundUserException;
 import ru.yandex.practicum.filmorate.exeptions.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.User;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Slf4j
 public class FilmValidator {
@@ -32,6 +35,21 @@ public class FilmValidator {
             log.warn("Ошибка в продолжительности: {}", film);
             throw new ValidationException("Фильм не соответствует условиям: " +
                     "продолжительность фильма не может быть отрицательной");
+        }
+    }
+
+    /**
+     * Валидация id пользователей
+     */
+    public static void isValidIdFilms(int id) throws ValidationException {
+        if (id < 0) {
+            throw new NotFoundUserException(String.format("Id фильма {} отрицательный", id));
+        }
+    }
+
+    public static void isFilmByFilms(List<Film> users, Film film) {
+        if (!users.contains(film)) {
+            throw new NotFoundUserException(String.format("Фильм № %d не найден", film.getId()));
         }
     }
 }
