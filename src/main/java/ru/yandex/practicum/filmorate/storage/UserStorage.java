@@ -8,17 +8,17 @@ public interface UserStorage {
     /**
      * получение списка пользователей
      */
-    public List<User> getUsers();
+    List<User> getUsers();
 
     /**
      * создание пользователя
      */
-    public User createUser(User user);
+    User createUser(User user);
 
     /**
      * обновление пользователя
      */
-    public User updateUser(User user);
+    User updateUser(User user);
 
     /**
      * Удаление пользователей из списка
@@ -33,5 +33,5 @@ public interface UserStorage {
     /**
      * найти пользователя по id
      */
-    public User findUserById(String idStr);
+    User findUserById(String idStr);
 }
