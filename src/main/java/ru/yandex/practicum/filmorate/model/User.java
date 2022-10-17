@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NonNull;
 
 import java.time.LocalDate;
+import java.util.TreeSet;
 
 @Data
 @Builder
@@ -17,4 +18,5 @@ public class User {
     private String login;
     @NonNull
     private LocalDate birthday;
+    private TreeSet<Integer> friends;
 }

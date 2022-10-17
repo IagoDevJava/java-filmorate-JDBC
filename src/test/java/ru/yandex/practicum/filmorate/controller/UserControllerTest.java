@@ -4,6 +4,8 @@ import org.junit.jupiter.api.Test;
 import ru.yandex.practicum.filmorate.exeptions.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.service.UserService;
+import ru.yandex.practicum.filmorate.storage.InMemoryUserStorage;
 
 import java.time.Duration;
 import java.time.LocalDate;
@@ -11,7 +13,9 @@ import java.time.LocalDate;
 import static org.junit.jupiter.api.Assertions.*;
 
 class UserControllerTest {
-    UserController userController = new UserController();
+    InMemoryUserStorage inMemoryUserStorage = new InMemoryUserStorage();
+    UserService userService = new UserService(inMemoryUserStorage);
+    UserController userController = new UserController(userService);
     User expectedUser;
     User expectedUser1;
 
@@ -24,7 +28,7 @@ class UserControllerTest {
                 .birthday(LocalDate.parse("2000-12-12"))
                 .build();
 
-        userController.addUser(expectedUser);
+        userController.createUser(expectedUser);
         User actualUser = userController.getUsers().get(0);
 
         assertEquals(expectedUser, actualUser, "Пользователь не добавлен");
@@ -46,8 +50,8 @@ class UserControllerTest {
                 .build();
 
         Throwable thrown = assertThrows(ValidationException.class, () -> {
-            userController.addUser(expectedUser);
-            userController.addUser(expectedUser1);
+            userController.createUser(expectedUser);
+            userController.createUser(expectedUser1);
         });
         assertNotNull(thrown.getMessage());
     }
@@ -62,7 +66,7 @@ class UserControllerTest {
                 .build();
 
         Throwable thrown = assertThrows(ValidationException.class, () -> {
-            userController.addUser(expectedUser);
+            userController.createUser(expectedUser);
         });
         assertNotNull(thrown.getMessage());
     }
@@ -83,8 +87,8 @@ class UserControllerTest {
                 .build();
 
         Throwable thrown = assertThrows(ValidationException.class, () -> {
-            userController.addUser(expectedUser);
-            userController.addUser(expectedUser1);
+            userController.createUser(expectedUser);
+            userController.createUser(expectedUser1);
         });
         assertNotNull(thrown.getMessage());
     }
@@ -98,7 +102,7 @@ class UserControllerTest {
                 .birthday(LocalDate.parse("2000-12-12"))
                 .build();
 
-        userController.addUser(expectedUser);
+        userController.createUser(expectedUser);
         User actualUser = userController.getUsers().get(0);
 
         assertEquals(expectedUser.getName(), actualUser.getName(),
@@ -113,7 +117,7 @@ class UserControllerTest {
                 .birthday(LocalDate.parse("2000-12-12"))
                 .build();
 
-        userController.addUser(expectedUser);
+        userController.createUser(expectedUser);
         User actualUser = userController.getUsers().get(0);
 
         assertEquals(expectedUser.getName(), actualUser.getName(),
@@ -129,7 +133,7 @@ class UserControllerTest {
                 .birthday(LocalDate.parse("2000-12-12"))
                 .build();
 
-        userController.addUser(expectedUser);
+        userController.createUser(expectedUser);
         User actualUser = userController.getUsers().get(0);
 
         assertEquals(expectedUser.getName(), actualUser.getName(),
@@ -146,7 +150,7 @@ class UserControllerTest {
                 .build();
 
         Throwable thrown = assertThrows(ValidationException.class, () -> {
-            userController.addUser(expectedUser);
+            userController.createUser(expectedUser);
         });
         assertNotNull(thrown.getMessage());
     }
