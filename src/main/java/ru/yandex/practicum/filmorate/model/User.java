@@ -18,5 +18,7 @@ public class User {
     private String login;
     @NonNull
     private LocalDate birthday;
+    @NonNull
+    private String friendlyStatus;
     private TreeSet<Integer> friends;
 }

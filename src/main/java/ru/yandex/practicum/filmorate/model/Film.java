@@ -19,5 +19,9 @@ public class Film {
     private LocalDate releaseDate;
     @NonNull
     private int duration;
+    @NonNull
+    private String genre;
+    @NonNull
+    private String rate;
     private Set<Integer> usersLike;
 }
