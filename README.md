@@ -26,7 +26,7 @@ public class FilmorateApplication {
 
 #### ER-диаграмма базы данных для приложения:
 
-![This is ER-diagramme](ER-D_BD_ver2.png)
+![This is ER-diagramme](ER-D_BD_ver3.png)
 
 #### Примеры запросов к базе данных:
 
