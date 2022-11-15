@@ -2,49 +2,55 @@ package ru.yandex.practicum.filmorate.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import ru.yandex.practicum.filmorate.exeptions.NotFoundUserException;
+import ru.yandex.practicum.filmorate.dao.UserDao;
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.storage.UserStorage;
-import ru.yandex.practicum.filmorate.validator.UserValidator;
 
-import java.util.*;
+import java.sql.SQLException;
+import java.util.List;
+import java.util.Optional;
 
 @Service
 public class UserService {
 
-    private final UserStorage userStorage;
+    //    private final UserStorage userStorage;
+    private final UserDao userDao;
 
     @Autowired
-    public UserService(UserStorage userStorage) {
-        this.userStorage = userStorage;
+    public UserService(UserDao userDao) {
+        this.userDao = userDao;
     }
+
+//    @Autowired
+//    public UserService(UserStorage userStorage) {
+//        this.userStorage = userStorage;
+//    }
 
     /**
      * получение списка пользователей
      */
     public List<User> getUsers() {
-        return userStorage.getUsers();
+        return userDao.getUsers();
     }
 
     /**
      * создание пользователя
      */
-    public User createUser(User user) {
-        return userStorage.createUser(user);
+    public User createUser(User user) throws SQLException {
+        return userDao.createUser(user);
     }
 
     /**
      * обновление пользователя
      */
     public User updateUser(User user) {
-        return userStorage.updateUser(user);
+        return userDao.updateUser(user);
     }
 
     /**
      * Удаление пользователей из списка
      */
     public void clearUsers() {
-        userStorage.clearUsers();
+        userDao.clearUsers();
     }
 
     /**
@@ -52,116 +58,41 @@ public class UserService {
      */
     public void deleteUserById(String idStr) {
         int id = Integer.parseInt(idStr);
-        userStorage.deleteUserById(id);
+        userDao.deleteUserById(id);
     }
 
     /**
      * найти пользователя по id
      */
-    public User findUserById(String idStr) {
-        return userStorage.findUserById(idStr);
-    }
-
-    /**
-     * добавление в друга к пользователю
-     */
-    public void addFriendsForUsers(String userIdStr, String friendIdStr) {
-        addFriends(userIdStr, friendIdStr, userStorage.findUserById(userIdStr));
-        addFriends(friendIdStr, userIdStr, userStorage.findUserById(friendIdStr));
+    public Optional<User> findUserById(String idStr) {
+        return userDao.findUserById(idStr);
     }
 
     /**
      * добавление в друзья
      */
-    private void addFriends(String idUser, String idFriend, User userById) {
-        int id = Integer.parseInt(idUser);
-        int friendId = Integer.parseInt(idFriend);
-        UserValidator.isValidIdUsers(id);
-        UserValidator.isValidIdUsers(friendId);
-        UserValidator.isUserByUsers(userStorage.getUsers(), userStorage.findUserById(idUser));
-        UserValidator.isUserByUsers(userStorage.getUsers(), userStorage.findUserById(idFriend));
-
-        if (isFriendsByUser(idUser)) {
-            TreeSet<Integer> friends = userById.getFriends();
-            friends.add(friendId);
-            userById.setFriends(friends);
-        } else {
-            TreeSet<Integer> friends = new TreeSet<>();
-            friends.add(friendId);
-            userById.setFriends(friends);
-        }
-    }
-
-    /**
-     * проверка наличия списка друзей
-     */
-    private Boolean isFriendsByUser(String id) {
-        return userStorage.findUserById(id).getFriends() != null;
-    }
-
-    /**
-     * удаление друга у пользователю
-     */
-    public void deleteFriendsForUsers(String userIdStr, String friendIdStr) {
-        deleteFriend(userIdStr, friendIdStr, userStorage.findUserById(userIdStr));
-        deleteFriend(friendIdStr, userIdStr, userStorage.findUserById(friendIdStr));
+    public void addFriendsForUsers(String userIdStr, String friendIdStr) {
+        userDao.addFriends(userIdStr, friendIdStr);
     }
 
     /**
      * удаление из друзей
      */
-    public void deleteFriend(String idUser, String idFriend, User userById) {
-        int id = Integer.parseInt(idUser);
-        int friendId = Integer.parseInt(idFriend);
-        UserValidator.isValidIdUsers(id);
-        UserValidator.isValidIdUsers(friendId);
-        UserValidator.isUserByUsers(userStorage.getUsers(), userStorage.findUserById(idUser));
-        UserValidator.isUserByUsers(userStorage.getUsers(), userStorage.findUserById(idFriend));
-
-        if (isFriendsByUser(idUser)) {
-            if (!userById.getFriends().contains(friendId)) {
-                throw new NotFoundUserException(String.format(
-                        "У пользователя № %d нет в друзьях пользователя № %d", id, friendId));
-            }
-            TreeSet<Integer> friends1 = userById.getFriends();
-            friends1.remove(friendId);
-            userById.setFriends(friends1);
-        } else {
-            throw new NotFoundUserException(String.format("У пользователя № %d нет друзей", id));
-        }
+    public void deleteFriendsForUsers(String userIdStr, String friendIdStr) {
+        userDao.deleteFriend(userIdStr, friendIdStr);
     }
 
     /**
-     * возвращаем список пользователей, являющихся его друзьями
+     * возвращаем список друзей пользователя
      */
     public List<User> getFriendsUser(String idStr) {
-        List<Integer> idFriendsList = new ArrayList<>(userStorage.findUserById(idStr).getFriends());
-        List<User> friendsList = new ArrayList<>();
-        for (Integer idFriends : idFriendsList) {
-            friendsList.add(userStorage.findUserById(String.valueOf(idFriends)));
-        }
-        return friendsList;
+        return userDao.getFriendsUser(idStr);
     }
 
     /**
      * вывод списка общих друзей
      */
-    public List<User> getListFriends(String id, String otherId) {
-        UserValidator.isUserByUsers(userStorage.getUsers(), userStorage.findUserById(id));
-        UserValidator.isUserByUsers(userStorage.getUsers(), userStorage.findUserById(otherId));
-
-        List<User> result = new ArrayList<>();
-
-        if (userStorage.findUserById(otherId).getFriends() != null || userStorage.findUserById(id).getFriends() != null) {
-            for (Integer friendOtherId : userStorage.findUserById(otherId).getFriends()) {
-                for (Integer friendId : userStorage.findUserById(id).getFriends()) {
-                    if (friendOtherId.equals(friendId)) {
-                        result.add(userStorage.findUserById(String.valueOf(friendId)));
-                    }
-                }
-            }
-        }
-
-        return result;
+    public List<User> getListCommonFriends(String id, String otherId) {
+        return userDao.getListCommonFriendsDao(id, otherId);
     }
 }

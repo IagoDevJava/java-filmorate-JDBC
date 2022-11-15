@@ -2,6 +2,7 @@ package ru.yandex.practicum.filmorate.validator;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.RequestBody;
+import ru.yandex.practicum.filmorate.exeptions.NotFoundMpaException;
 import ru.yandex.practicum.filmorate.exeptions.NotFoundUserException;
 import ru.yandex.practicum.filmorate.exeptions.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
@@ -36,14 +37,18 @@ public class FilmValidator {
             throw new ValidationException("Фильм не соответствует условиям: " +
                     "продолжительность фильма не может быть отрицательной");
         }
+        if (film.getMpa() == null) {
+            log.warn("Ошибка наличия рейтинга");
+            throw new ValidationException("Рейтинг фильма не указан");
+        }
     }
 
     /**
-     * Валидация id пользователей
+     * Валидация id фильмов
      */
     public static void isValidIdFilms(int id) throws ValidationException {
         if (id < 0) {
-            throw new NotFoundUserException(String.format("Id фильма {} отрицательный", id));
+            throw new NotFoundUserException(String.format("Id фильма %d отрицательный", id));
         }
     }
 

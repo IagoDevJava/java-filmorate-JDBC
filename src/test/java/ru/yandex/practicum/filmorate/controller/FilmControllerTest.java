@@ -1,19 +1,21 @@
 package ru.yandex.practicum.filmorate.controller;
 
 import org.junit.jupiter.api.Test;
+import org.springframework.jdbc.core.JdbcTemplate;
+import ru.yandex.practicum.filmorate.dao.impl.FilmDaoImpl;
 import ru.yandex.practicum.filmorate.exeptions.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.service.FilmService;
-import ru.yandex.practicum.filmorate.storage.InMemoryFilmStorage;
 
-import java.time.Duration;
 import java.time.LocalDate;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class FilmControllerTest {
-    InMemoryFilmStorage inMemoryFilmStorage = new InMemoryFilmStorage();
-    FilmService filmService = new FilmService(inMemoryFilmStorage);
+    //    InMemoryFilmStorage inMemoryFilmStorage = new InMemoryFilmStorage();
+    JdbcTemplate jdbcTemplate;
+    FilmDaoImpl filmDao = new FilmDaoImpl(jdbcTemplate);
+    FilmService filmService = new FilmService(filmDao);
     FilmController filmControllerTest = new FilmController(filmService);
     Film expectedFilm;
 

@@ -6,7 +6,9 @@ import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.UserService;
 
+import java.sql.SQLException;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @Slf4j
@@ -25,7 +27,7 @@ public class UserController {
      */
     @GetMapping
     public List<User> getUsers() {
-        log.debug("Список пользователей");
+        log.debug("Запрашиваем список пользователей");
         return userService.getUsers();
     }
 
@@ -33,8 +35,8 @@ public class UserController {
      * получение пользователя по id
      */
     @GetMapping("/{id}")
-    public User getUserById(@PathVariable String id) {
-        log.debug("Получили пользователя с id: {}", id);
+    public Optional<User> getUserById(@PathVariable String id) {
+        log.debug("Запрашиваем пользователя с id: {}", id);
         return userService.findUserById(id);
     }
 
@@ -42,8 +44,8 @@ public class UserController {
      * создание пользователя
      */
     @PostMapping()
-    public User createUser(@RequestBody User user) {
-        log.debug("Добавили: {}", user);
+    public User createUser(@RequestBody User user) throws SQLException {
+        log.debug("Добавляем пользователя: {}", user);
         return userService.createUser(user);
     }
 
@@ -52,7 +54,7 @@ public class UserController {
      */
     @PutMapping()
     public User updateUser(@RequestBody User user) {
-        log.debug("Обновили: {}", user);
+        log.debug("Обновляем пользователя: {}", user);
         return userService.updateUser(user);
     }
 
@@ -61,7 +63,7 @@ public class UserController {
      */
     @DeleteMapping
     public void clearUsers() {
-        log.debug("Очистили список пользователей:");
+        log.debug("Очищаем список пользователей:");
         userService.clearUsers();
     }
 
@@ -70,7 +72,7 @@ public class UserController {
      */
     @DeleteMapping("/{id}")
     public void deleteUserById(@PathVariable String id) {
-        log.debug("Удалили пользователя по id: {}", id);
+        log.debug("Удаляем пользователя по id: {}", id);
         userService.deleteUserById(id);
     }
 
@@ -79,7 +81,7 @@ public class UserController {
      */
     @PutMapping("/{id}/friends/{friendId}")
     public void addFriend(@PathVariable String id, @PathVariable String friendId) {
-        log.debug("Добавили пользователя с id {}, в друзья к пользователю с id {}", friendId, id);
+        log.debug("Добавляем пользователя с id {}, в друзья к пользователю с id {}", friendId, id);
         userService.addFriendsForUsers(id, friendId);
     }
 
@@ -88,16 +90,16 @@ public class UserController {
      */
     @DeleteMapping("/{id}/friends/{friendId}")
     public void deleteFriend(@PathVariable String id, @PathVariable String friendId) {
-        log.debug("Удалили пользователя с id {}, из друзей пользователя с id {}", friendId, id);
+        log.debug("Удаляем пользователя с id {}, из друзей пользователя с id {}", friendId, id);
         userService.deleteFriendsForUsers(id, friendId);
     }
 
     /**
-     * возвращаем список пользователей, являющихся его друзьями
+     * возвращаем список друзей пользователя
      */
     @GetMapping("/{id}/friends")
     public List<User> getFriendsUser(@PathVariable String id) {
-        log.debug("Список друзей пользователя с id: {}", id);
+        log.debug("Ищем список друзей пользователя с id: {}", id);
         return userService.getFriendsUser(id);
     }
 
@@ -106,7 +108,7 @@ public class UserController {
      */
     @GetMapping("/{id}/friends/common/{otherId}")
     public List<User> getUsers(@PathVariable String id, @PathVariable String otherId) {
-        log.debug("Список общих друзей пользователей: {}, {}", id, otherId);
-        return userService.getListFriends(id, otherId);
+        log.debug("Ищем общих друзей пользователей: {}, {}", id, otherId);
+        return userService.getListCommonFriends(id, otherId);
     }
 }

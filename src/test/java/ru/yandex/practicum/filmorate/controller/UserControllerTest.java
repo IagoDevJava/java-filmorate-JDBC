@@ -1,26 +1,30 @@
 package ru.yandex.practicum.filmorate.controller;
 
 import org.junit.jupiter.api.Test;
+import org.springframework.jdbc.core.JdbcTemplate;
+import ru.yandex.practicum.filmorate.dao.impl.UserDaoImpl;
 import ru.yandex.practicum.filmorate.exeptions.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.UserService;
 import ru.yandex.practicum.filmorate.storage.InMemoryUserStorage;
 
+import java.sql.SQLException;
 import java.time.Duration;
 import java.time.LocalDate;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class UserControllerTest {
-    InMemoryUserStorage inMemoryUserStorage = new InMemoryUserStorage();
-    UserService userService = new UserService(inMemoryUserStorage);
+//    InMemoryUserStorage inMemoryUserStorage = new InMemoryUserStorage();
+    UserDaoImpl userDao = new UserDaoImpl(new JdbcTemplate());
+    UserService userService = new UserService(userDao);
     UserController userController = new UserController(userService);
     User expectedUser;
     User expectedUser1;
 
     @Test
-    void isValidUser() throws ValidationException {
+    void isValidUser() throws ValidationException, SQLException {
         expectedUser = User.builder()
                 .name("user")
                 .login("login")
@@ -94,7 +98,7 @@ class UserControllerTest {
     }
 
     @Test
-    void isValidNameUserBlank() throws ValidationException {
+    void isValidNameUserBlank() throws ValidationException, SQLException {
         expectedUser = User.builder()
                 .name(" ")
                 .login("login")
@@ -110,7 +114,7 @@ class UserControllerTest {
     }
 
     @Test
-    void isValidNameUserNull() throws ValidationException {
+    void isValidNameUserNull() throws ValidationException, SQLException {
         expectedUser = User.builder()
                 .login("login")
                 .email("user@yandex.ru")
@@ -125,7 +129,7 @@ class UserControllerTest {
     }
 
     @Test
-    void isValidNameUserEmpty() throws ValidationException {
+    void isValidNameUserEmpty() throws ValidationException, SQLException {
         expectedUser = User.builder()
                 .name("")
                 .login("login")

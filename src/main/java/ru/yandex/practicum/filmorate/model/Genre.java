@@ -6,9 +6,13 @@ import lombok.NonNull;
 
 @Data
 @Builder
-public class Genre {
+public class Genre implements Comparable<Genre> {
     @NonNull
     private int id;
-    @NonNull
     private String name;
+
+    @Override
+    public int compareTo(Genre o) {
+        return Integer.compare(this.id, o.id);
+    }
 }

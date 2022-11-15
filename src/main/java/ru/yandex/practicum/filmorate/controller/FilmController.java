@@ -8,6 +8,7 @@ import ru.yandex.practicum.filmorate.service.FilmService;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 @RestController
 @Slf4j
@@ -34,7 +35,7 @@ public class FilmController {
      */
     @PostMapping()
     public Film addFilm(@RequestBody Film film) {
-        log.debug("Добавили: {}", film);
+        log.debug("Добавляем: {}", film);
         return filmService.addFilm(film);
     }
 
@@ -43,7 +44,7 @@ public class FilmController {
      */
     @PutMapping()
     public Film updateFilm(@RequestBody Film film) {
-        log.debug("Обновили: {}", film);
+        log.debug("Обновляем: {}", film);
         return filmService.updateFilm(film);
     }
 
@@ -52,7 +53,7 @@ public class FilmController {
      */
     @DeleteMapping
     public void clearFilms() {
-        log.debug("Очистили список фильмов.");
+        log.debug("Очищаем список фильмов.");
         filmService.clearFilms();
     }
 
@@ -61,7 +62,7 @@ public class FilmController {
      */
     @DeleteMapping("/{id}")
     public void deleteFilmById(@PathVariable String id) {
-        log.debug("Удалили фильм по id {}.", id);
+        log.debug("Удаляем фильм по id {}.", id);
         filmService.deleteFilmById(id);
     }
 
@@ -69,7 +70,8 @@ public class FilmController {
      * получение фильма по id
      */
     @GetMapping("/{id}")
-    public Film findFilmById(@PathVariable String id) {
+    public Optional<Film> findFilmById(@PathVariable String id) {
+        log.debug("Получаем фильм по id {}", id);
         return filmService.findFilmById(id);
     }
 
@@ -96,6 +98,7 @@ public class FilmController {
      */
     @GetMapping("/popular")
     public List<Film> getPopularFilms(@RequestParam(required = false) String count) {
+        log.debug("Возвращаем популярные фильмы");
         return filmService.getPopularFilms(Objects.requireNonNullElse(count, "10"));
     }
 }
