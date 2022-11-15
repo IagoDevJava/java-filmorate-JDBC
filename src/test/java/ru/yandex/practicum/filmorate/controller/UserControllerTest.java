@@ -16,7 +16,6 @@ import java.time.LocalDate;
 import static org.junit.jupiter.api.Assertions.*;
 
 class UserControllerTest {
-//    InMemoryUserStorage inMemoryUserStorage = new InMemoryUserStorage();
     UserDaoImpl userDao = new UserDaoImpl(new JdbcTemplate());
     UserService userService = new UserService(userDao);
     UserController userController = new UserController(userService);

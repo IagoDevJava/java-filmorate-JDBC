@@ -12,7 +12,6 @@ import java.time.LocalDate;
 import static org.junit.jupiter.api.Assertions.*;
 
 class FilmControllerTest {
-    //    InMemoryFilmStorage inMemoryFilmStorage = new InMemoryFilmStorage();
     JdbcTemplate jdbcTemplate;
     FilmDaoImpl filmDao = new FilmDaoImpl(jdbcTemplate);
     FilmService filmService = new FilmService(filmDao);
