@@ -141,34 +141,6 @@ public class FilmDaoImpl implements FilmDao {
     }
 
     /**
-     * Удаление фильмов из списка
-     */
-    @Override
-    public void clearFilms() {
-        String sqlDelLikes = "DELETE FROM LIKES";
-        jdbcTemplate.update(sqlDelLikes);
-        String sql = "DELETE from FILM";
-        jdbcTemplate.update(sql);
-        log.info("Удалены все фильмы таблицы FILM");
-    }
-
-    /**
-     * Удаление фильма по id
-     */
-    @Override
-    public void deleteFilmById(String idStr) {
-        if (findFilmById(idStr).isPresent()) {
-            String sqlDelLikesId = "DELETE FROM LIKES WHERE FILM_ID=?";
-            jdbcTemplate.update(sqlDelLikesId, idStr);
-            String sql = "DELETE from FILM where ID=?";
-            jdbcTemplate.update(sql, idStr);
-        } else {
-            throw new NotFoundFilmException("Такого фильма нет в базе.");
-        }
-        log.info("Удален фильм: {}", idStr);
-    }
-
-    /**
      * получение фильма по id
      */
     @Override
@@ -260,6 +232,34 @@ public class FilmDaoImpl implements FilmDao {
         }
         log.info("Создали список популярных фильмов, в количестве: {}", popularFilms.size());
         return popularFilms;
+    }
+
+    /**
+     * Удаление фильмов из списка
+     */
+    @Override
+    public void clearFilms() {
+        String sqlDelLikes = "DELETE FROM LIKES";
+        jdbcTemplate.update(sqlDelLikes);
+        String sql = "DELETE from FILM";
+        jdbcTemplate.update(sql);
+        log.info("Удалены все фильмы таблицы FILM");
+    }
+
+    /**
+     * Удаление фильма по id
+     */
+    @Override
+    public void deleteFilmById(String idStr) {
+        if (findFilmById(idStr).isPresent()) {
+            String sqlDelLikesId = "DELETE FROM LIKES WHERE FILM_ID=?";
+            jdbcTemplate.update(sqlDelLikesId, idStr);
+            String sql = "DELETE from FILM where ID=?";
+            jdbcTemplate.update(sql, idStr);
+        } else {
+            throw new NotFoundFilmException("Такого фильма нет в базе.");
+        }
+        log.info("Удален фильм: {}", idStr);
     }
 
     private List<Film> getFilms(List<Film> popularFilms, SqlRowSet filmRows) {

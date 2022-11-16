@@ -106,35 +106,6 @@ public class UserDaoImpl implements UserDao {
     }
 
     /**
-     * Удаление пользователей из списка
-     */
-    @Override
-    public void clearUsers() {
-        String sqlDropFr = "DELETE FROM FRIENDSHIP";
-        jdbcTemplate.update(sqlDropFr);
-        String sqlDelUsers = "DELETE from USERS";
-        jdbcTemplate.update(sqlDelUsers);
-        log.info("Удалены все пользователи таблицы USERS");
-
-    }
-
-    /**
-     * Удаление пользователя по id
-     */
-    @Override
-    public void deleteUserById(int id) {
-        if (findUserById(String.valueOf(id)).isPresent()) {
-            String sqlDelFr = "DELETE FROM FRIENDSHIP WHERE USER_ID=?";
-            jdbcTemplate.update(sqlDelFr, id);
-            String sqlDelUs = "DELETE from USERS where ID=?";
-            jdbcTemplate.update(sqlDelUs, id);
-        } else {
-            throw new NotFoundUserException("Такого пользователя нет в базе.");
-        }
-        log.info("Удален пользователь: {}", id);
-    }
-
-    /**
      * найти пользователя по id
      */
     @Override
@@ -243,6 +214,35 @@ public class UserDaoImpl implements UserDao {
             log.info("У пользователей с id {} и {} в нет общих друзей", id, otherId);
             return new ArrayList<>();
         }
+    }
+
+    /**
+     * Удаление пользователей из списка
+     */
+    @Override
+    public void clearUsers() {
+        String sqlDropFr = "DELETE FROM FRIENDSHIP";
+        jdbcTemplate.update(sqlDropFr);
+        String sqlDelUsers = "DELETE from USERS";
+        jdbcTemplate.update(sqlDelUsers);
+        log.info("Удалены все пользователи таблицы USERS");
+
+    }
+
+    /**
+     * Удаление пользователя по id
+     */
+    @Override
+    public void deleteUserById(int id) {
+        if (findUserById(String.valueOf(id)).isPresent()) {
+            String sqlDelFr = "DELETE FROM FRIENDSHIP WHERE USER_ID=? OR FRIEND_ID=?";
+            jdbcTemplate.update(sqlDelFr, id, id);
+            String sqlDelUs = "DELETE from USERS where ID=?";
+            jdbcTemplate.update(sqlDelUs, id);
+        } else {
+            throw new NotFoundUserException("Такого пользователя нет в базе.");
+        }
+        log.info("Удален пользователь: {}", id);
     }
 
     /**
