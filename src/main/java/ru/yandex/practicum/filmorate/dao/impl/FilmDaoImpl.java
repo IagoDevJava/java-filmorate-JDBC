@@ -215,7 +215,7 @@ public class FilmDaoImpl implements FilmDao {
         List<Film> popularFilms = new ArrayList<>();
         SqlRowSet filmRows = jdbcTemplate.queryForRowSet(
                 "SELECT F.ID, F.NAME, F.DESCRIPTION, F.RELEASE_DATE, F.DURATION, F.RATE, F.MPA "
-                        + "FROM FILM F LEFT JOIN LIKES L on F.ID = L.FILM_ID GROUP BY F.NAME "
+                        + "FROM FILM F LEFT JOIN LIKES L on F.ID = L.FILM_ID GROUP BY F.ID "
                         + "ORDER BY COUNT(L.USER_ID) DESC LIMIT ?", count);
         while (filmRows.next()) {
             Film film = Film.builder()
@@ -226,6 +226,7 @@ public class FilmDaoImpl implements FilmDao {
                     .rate(filmRows.getString("rate"))
                     .duration(filmRows.getInt("duration"))
                     .mpa(getMpa(filmRows.getInt("MPA")))
+                    .genres(getGenresForFilm(filmRows.getString("id")))
                     .build();
             log.info("Найден фильм: {} {}", film.getId(), film.getName());
             popularFilms.add(film);

@@ -223,6 +223,8 @@ public class UserDaoImpl implements UserDao {
     public void clearUsers() {
         String sqlDropFr = "DELETE FROM FRIENDSHIP";
         jdbcTemplate.update(sqlDropFr);
+        String sqlDropLike = "DELETE FROM LIKES";
+        jdbcTemplate.update(sqlDropLike);
         String sqlDelUsers = "DELETE from USERS";
         jdbcTemplate.update(sqlDelUsers);
         log.info("Удалены все пользователи таблицы USERS");
@@ -237,6 +239,8 @@ public class UserDaoImpl implements UserDao {
         if (findUserById(String.valueOf(id)).isPresent()) {
             String sqlDelFr = "DELETE FROM FRIENDSHIP WHERE USER_ID=? OR FRIEND_ID=?";
             jdbcTemplate.update(sqlDelFr, id, id);
+            String sqlDropLike = "DELETE FROM LIKES WHERE USER_ID=?";
+            jdbcTemplate.update(sqlDropLike, id);
             String sqlDelUs = "DELETE from USERS where ID=?";
             jdbcTemplate.update(sqlDelUs, id);
         } else {
