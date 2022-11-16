@@ -62,6 +62,3 @@ VALUES ('Комедия'),
        ('Триллер'),
        ('Документальный'),
        ('Боевик');
-
-INSERT INTO USERS (NAME, LOGIN, EMAIL, BIRTHDAY)
-VALUES ('user', 'login', 'user@yandex.ru', '2000-12-12');

@@ -110,8 +110,10 @@ public class UserDaoImpl implements UserDao {
      */
     @Override
     public void clearUsers() {
-        String sql = "DELETE from USERS";
-        jdbcTemplate.update(sql);
+        String sqlDropFr = "DELETE FROM FRIENDSHIP";
+        jdbcTemplate.update(sqlDropFr);
+        String sqlDelUsers = "DELETE from USERS";
+        jdbcTemplate.update(sqlDelUsers);
         log.info("Удалены все пользователи таблицы USERS");
 
     }
@@ -122,8 +124,10 @@ public class UserDaoImpl implements UserDao {
     @Override
     public void deleteUserById(int id) {
         if (findUserById(String.valueOf(id)).isPresent()) {
-            String sql = "DELETE from USERS where ID=?";
-            jdbcTemplate.update(sql, id);
+            String sqlDelFr = "DELETE FROM FRIENDSHIP WHERE USER_ID=?";
+            jdbcTemplate.update(sqlDelFr, id);
+            String sqlDelUs = "DELETE from USERS where ID=?";
+            jdbcTemplate.update(sqlDelUs, id);
         } else {
             throw new NotFoundUserException("Такого пользователя нет в базе.");
         }

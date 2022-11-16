@@ -19,8 +19,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @AutoConfigureTestDatabase
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
 class FilmControllerTest {
-    JdbcTemplate jdbcTemplate;
-    FilmDaoImpl filmDao = new FilmDaoImpl(jdbcTemplate);
+    FilmDaoImpl filmDao = new FilmDaoImpl(new JdbcTemplate());
     FilmService filmService = new FilmService(filmDao);
     FilmController filmControllerTest = new FilmController(filmService);
     Film expectedFilm;

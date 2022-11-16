@@ -145,6 +145,8 @@ public class FilmDaoImpl implements FilmDao {
      */
     @Override
     public void clearFilms() {
+        String sqlDelLikes = "DELETE FROM LIKES";
+        jdbcTemplate.update(sqlDelLikes);
         String sql = "DELETE from FILM";
         jdbcTemplate.update(sql);
         log.info("Удалены все фильмы таблицы FILM");
@@ -156,6 +158,8 @@ public class FilmDaoImpl implements FilmDao {
     @Override
     public void deleteFilmById(String idStr) {
         if (findFilmById(idStr).isPresent()) {
+            String sqlDelLikesId = "DELETE FROM LIKES WHERE FILM_ID=?";
+            jdbcTemplate.update(sqlDelLikesId, idStr);
             String sql = "DELETE from FILM where ID=?";
             jdbcTemplate.update(sql, idStr);
         } else {
@@ -238,7 +242,7 @@ public class FilmDaoImpl implements FilmDao {
         }
         List<Film> popularFilms = new ArrayList<>();
         SqlRowSet filmRows = jdbcTemplate.queryForRowSet(
-                "SELECT F.ID, F.NAME, F.DESCRIPTION, F.RELEASE_DATE, F.DURATION, F.MPA "
+                "SELECT F.ID, F.NAME, F.DESCRIPTION, F.RELEASE_DATE, F.DURATION, F.RATE, F.MPA "
                         + "FROM FILM F LEFT JOIN LIKES L on F.ID = L.FILM_ID GROUP BY F.NAME "
                         + "ORDER BY COUNT(L.USER_ID) DESC LIMIT ?", count);
         while (filmRows.next()) {
@@ -247,6 +251,7 @@ public class FilmDaoImpl implements FilmDao {
                     .name(Objects.requireNonNull(filmRows.getString("name")))
                     .description(Objects.requireNonNull(filmRows.getString("description")))
                     .releaseDate(Objects.requireNonNull(filmRows.getDate("release_date")).toLocalDate())
+                    .rate(filmRows.getString("rate"))
                     .duration(filmRows.getInt("duration"))
                     .mpa(getMpa(filmRows.getInt("MPA")))
                     .build();
