@@ -118,9 +118,13 @@ public class FilmDbStorage implements FilmStorage {
     @Override
     public void clearFilms() {
         String sqlDelLikes = "DELETE FROM LIKES";
+        String sqlDelGenres = "DELETE FROM FILM_GENRE";
+        String sqlDelMpa = "DELETE FROM FILM_MPA";
         String sql = "DELETE from FILMS";
         try {
             jdbcTemplate.update(sqlDelLikes);
+            jdbcTemplate.update(sqlDelGenres);
+            jdbcTemplate.update(sqlDelMpa);
             jdbcTemplate.update(sql);
             log.info("Удалены все фильмы таблицы FILM");
         } catch (Exception e) {
@@ -136,6 +140,8 @@ public class FilmDbStorage implements FilmStorage {
         if (findFilmById(Long.valueOf(id)) != null) {
             String sqlDelLikesId = "DELETE FROM LIKES WHERE FILM_ID=?";
             jdbcTemplate.update(sqlDelLikesId, id);
+            String sqlDelGenId = "DELETE FROM FILM_GENRE WHERE FILM_ID=?";
+            jdbcTemplate.update(sqlDelGenId, id);
             String sqlDelMpa = "DELETE FROM FILM_MPA WHERE FILM_ID=?";
             jdbcTemplate.update(sqlDelMpa);
             String sql = "DELETE from FILMS where ID=?";
