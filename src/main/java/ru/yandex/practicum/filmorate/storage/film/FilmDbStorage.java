@@ -47,7 +47,8 @@ public class FilmDbStorage implements FilmStorage {
         film.setId(idn);
         log.info("Установлен id фильма: {}", idn);
 
-        String sql = "INSERT INTO FILMS (id, name, description, releasedate, duration) VALUES (?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO FILMS (id, name, description, releasedate, duration) " +
+                "VALUES (?, ?, ?, ?, ?)";
         jdbcTemplate.update(sql, film.getId(), film.getName(), film.getDescription(),
                 Date.valueOf(film.getReleaseDate()), film.getDuration());
         log.info("Добавлен новый фильм: {}", film);
@@ -57,11 +58,11 @@ public class FilmDbStorage implements FilmStorage {
         }
 
         if (film.getGenres() != null) {
-            log.info("Список жанров не пустой {}", film.getGenres());
+            log.info("Список жанров не null {}", film.getGenres());
             genreStorage.addGenre(film);
         }
 
-        return findFilmById(film.getId());
+        return film;
     }
 
     /**
@@ -138,12 +139,8 @@ public class FilmDbStorage implements FilmStorage {
     @Override
     public void deleteFilmById(String id) {
         if (findFilmById(Long.valueOf(id)) != null) {
-            String sqlDelLikesId = "DELETE FROM LIKES WHERE FILM_ID=?";
-            String sqlDelGenId = "DELETE FROM FILM_GENRE WHERE FILM_ID=?";
             String sqlDelMpa = "DELETE FROM FILM_MPA WHERE FILM_ID=?";
-            jdbcTemplate.update(sqlDelLikesId, id);
-            jdbcTemplate.update(sqlDelGenId, id);
-            jdbcTemplate.update(sqlDelMpa);
+            jdbcTemplate.update(sqlDelMpa, id);
             String sql = "DELETE from FILMS where ID=?";
             jdbcTemplate.update(sql, id);
             log.info("Удален фильм: {}", id);

@@ -30,8 +30,7 @@ CREATE TABLE IF NOT EXISTS films
     name        text NOT NULL,
     description varchar(200),
     releasedate date NOT NULL,
-    duration    int  NOT NULL,
-    MPA_ID      INTEGER REFERENCES MPA (ID)
+    duration    int  NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS film_mpa

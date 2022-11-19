@@ -38,7 +38,7 @@ public class FilmoRateApplicationTests {
     @AfterEach
     void tearDown() {
         jdbcTemplate.update("DELETE FROM FILM_GENRE");
-//        jdbcTemplate.update("DELETE FROM FILM_MPA");
+        jdbcTemplate.update("DELETE FROM FILM_MPA");
         jdbcTemplate.update("DELETE FROM LIKES");
         jdbcTemplate.update("DELETE FROM FILMS");
         jdbcTemplate.update("DELETE FROM FRIENDS");
@@ -316,6 +316,52 @@ public class FilmoRateApplicationTests {
 
     }
 
+    /**
+     * тест на удаление фильма по id
+     */
+    @Test
+    public void isDeleteFilmById() {
+        Film film = Film.builder()
+                .id(1L)
+                .name("film1")
+                .description("desc1")
+                .releaseDate(LocalDate.parse("2010-10-10"))
+                .duration(120)
+                .rate(0L)
+                .mpa(new Mpa(1L, "G"))
+                .genres(new ArrayList<>())
+                .build();
+        filmStorage.create(film);
+        filmStorage.deleteFilmById(String.valueOf(1));
+
+        assertThrows(FilmNotFoundException.class, () -> {
+            filmStorage.findFilmById(1L);
+        });
+    }
+
+    /**
+     * тест на удаление фильмов
+     */
+    @Test
+    public void isDeleteFilms() {
+        Film film = Film.builder()
+                .id(1L)
+                .name("film1")
+                .description("desc1")
+                .releaseDate(LocalDate.parse("2010-10-10"))
+                .duration(120)
+                .rate(0L)
+                .mpa(new Mpa(1L, "G"))
+                .genres(new ArrayList<>())
+                .build();
+        filmStorage.create(film);
+        filmStorage.clearFilms();
+
+        assertThrows(FilmNotFoundException.class, () -> {
+            filmStorage.findFilmById(1L);
+        });
+    }
+
     @Test
     public void addLikeTest() {
         User user1 = new User(1L, "login1", "name1", "ya1@ya.ru",
@@ -425,20 +471,20 @@ public class FilmoRateApplicationTests {
                 );
     }
 
-//    @Test
-//    public void getMpaTest() {
-//        jdbcTemplate.update("INSERT INTO FILMS (id, name, description, releasedate, duration) " +
-//                "VALUES ( 1, 'Какой-то фильм', 'Какое-то описание', '1900-01-01', '120')");
-//        jdbcTemplate.update("INSERT INTO FILM_MPA (film_id, mpa_id) VALUES ( 1, 1)");
-//
-//        Optional<Mpa> mpaOptional = Optional.ofNullable(mpaStorage.getMpa(1L));
-//
-//        assertThat(mpaOptional)
-//                .isPresent()
-//                .hasValueSatisfying(mpa ->
-//                        assertThat(mpa).hasFieldOrPropertyWithValue("id", 1L)
-//                );
-//    }
+    @Test
+    public void getMpaTest() {
+        jdbcTemplate.update("INSERT INTO FILMS (id, name, description, releasedate, duration) " +
+                "VALUES ( 1, 'Какой-то фильм', 'Какое-то описание', '1900-01-01', '120')");
+        jdbcTemplate.update("INSERT INTO FILM_MPA (film_id, mpa_id) VALUES ( 1, 1)");
+
+        Optional<Mpa> mpaOptional = Optional.ofNullable(mpaStorage.getMpa(1L));
+
+        assertThat(mpaOptional)
+                .isPresent()
+                .hasValueSatisfying(mpa ->
+                        assertThat(mpa).hasFieldOrPropertyWithValue("id", 1L)
+                );
+    }
 
     @Test
     public void addMpaTest() {
