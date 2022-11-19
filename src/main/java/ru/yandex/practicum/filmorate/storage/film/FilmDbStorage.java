@@ -138,17 +138,17 @@ public class FilmDbStorage implements FilmStorage {
     @Override
     public void deleteFilmById(String id) {
         try {
-            String sqlDelLikesId = "DELETE FROM LIKES WHERE FILM_ID=?";
-            String sqlDelGenId = "DELETE FROM FILM_GENRE WHERE FILM_ID=?";
-            String sqlDelMpa = "DELETE FROM FILM_MPA WHERE FILM_ID=?";
+//            String sqlDelLikesId = "DELETE FROM LIKES WHERE FILM_ID=?";
+//            String sqlDelGenId = "DELETE FROM FILM_GENRE WHERE FILM_ID=?";
+//            String sqlDelMpa = "DELETE FROM FILM_MPA WHERE FILM_ID=?";
             String sql = "DELETE from FILMS where ID=?";
-            jdbcTemplate.update(sqlDelLikesId, id);
-            jdbcTemplate.update(sqlDelGenId, id);
-            jdbcTemplate.update(sqlDelMpa);
+//            jdbcTemplate.update(sqlDelLikesId, id);
+//            jdbcTemplate.update(sqlDelGenId, id);
+//            jdbcTemplate.update(sqlDelMpa);
             jdbcTemplate.update(sql, id);
             log.info("Удален фильм: {}", id);
         } catch (Exception e){
-            throw new FilmNotFoundException("Такого фильма нет в базе!!!.");
+            throw new FilmNotFoundException("Такого фильма нет в базе.");
         }
     }
 
