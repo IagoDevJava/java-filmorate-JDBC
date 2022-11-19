@@ -34,11 +34,11 @@ CREATE TABLE IF NOT EXISTS films
     MPA_ID      INTEGER REFERENCES MPA (ID)
 );
 
--- CREATE TABLE IF NOT EXISTS film_mpa
--- (
---     film_id INTEGER NOT NULL REFERENCES films (id),
---     mpa_id  INTEGER NOT NULL REFERENCES mpa (id)
--- );
+CREATE TABLE IF NOT EXISTS film_mpa
+(
+    film_id INTEGER NOT NULL REFERENCES films (id),
+    mpa_id  INTEGER NOT NULL REFERENCES mpa (id)
+);
 
 CREATE TABLE IF NOT EXISTS film_genre
 (

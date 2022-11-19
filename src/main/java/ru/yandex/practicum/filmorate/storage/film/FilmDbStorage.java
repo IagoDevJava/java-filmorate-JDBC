@@ -120,11 +120,11 @@ public class FilmDbStorage implements FilmStorage {
         try {
             String sqlDelLikes = "DELETE FROM LIKES";
             String sqlDelGenres = "DELETE FROM FILM_GENRE";
-//            String sqlDelMpa = "DELETE FROM FILM_MPA";
+            String sqlDelMpa = "DELETE FROM FILM_MPA";
             String sql = "DELETE from FILMS";
             jdbcTemplate.update(sqlDelLikes);
             jdbcTemplate.update(sqlDelGenres);
-//            jdbcTemplate.update(sqlDelMpa);
+            jdbcTemplate.update(sqlDelMpa);
             jdbcTemplate.update(sql);
             log.info("Удалены все фильмы таблицы FILM");
         } catch (Exception e) {
@@ -138,12 +138,12 @@ public class FilmDbStorage implements FilmStorage {
     @Override
     public void deleteFilmById(String id) {
         if (findFilmById(Long.valueOf(id)) != null) {
-//            String sqlDelLikesId = "DELETE FROM LIKES WHERE FILM_ID=?";
-//            String sqlDelGenId = "DELETE FROM FILM_GENRE WHERE FILM_ID=?";
-//            String sqlDelMpa = "DELETE FROM FILM_MPA WHERE FILM_ID=?";
-//            jdbcTemplate.update(sqlDelLikesId, id);
-//            jdbcTemplate.update(sqlDelGenId, id);
-//            jdbcTemplate.update(sqlDelMpa);
+            String sqlDelLikesId = "DELETE FROM LIKES WHERE FILM_ID=?";
+            String sqlDelGenId = "DELETE FROM FILM_GENRE WHERE FILM_ID=?";
+            String sqlDelMpa = "DELETE FROM FILM_MPA WHERE FILM_ID=?";
+            jdbcTemplate.update(sqlDelLikesId, id);
+            jdbcTemplate.update(sqlDelGenId, id);
+            jdbcTemplate.update(sqlDelMpa);
             String sql = "DELETE from FILMS where ID=?";
             jdbcTemplate.update(sql, id);
             log.info("Удален фильм: {}", id);
