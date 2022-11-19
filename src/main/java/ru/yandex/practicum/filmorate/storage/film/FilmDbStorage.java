@@ -107,7 +107,7 @@ public class FilmDbStorage implements FilmStorage {
         String sql = "select * from films where id = ?";
         try {
             return jdbcTemplate.queryForObject(sql, (rs, rowNum) -> makeFilm(rs), id);
-        } catch (EmptyResultDataAccessException e) {
+        } catch (Exception e) {
             throw new FilmNotFoundException(String.format("Фильм с id %d не найден", id));
         }
     }
