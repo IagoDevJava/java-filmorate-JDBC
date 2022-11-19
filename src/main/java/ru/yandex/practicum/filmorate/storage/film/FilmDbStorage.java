@@ -194,7 +194,7 @@ public class FilmDbStorage implements FilmStorage {
                 .genres(genreStorage.getGenre(rs.getLong("id")))
                 .build();
 
-        if (film == null) {
+        if (film.getName() == null) {
             return null;
         }
         return film;
