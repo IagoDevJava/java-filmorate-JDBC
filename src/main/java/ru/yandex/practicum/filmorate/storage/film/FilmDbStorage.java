@@ -105,7 +105,6 @@ public class FilmDbStorage implements FilmStorage {
     @Override
     public Film findFilmById(Long id) {
         String sql = "select * from films where id = ?";
-
         try {
             return jdbcTemplate.queryForObject(sql, (rs, rowNum) -> makeFilm(rs), id);
         } catch (EmptyResultDataAccessException e) {
@@ -119,10 +118,14 @@ public class FilmDbStorage implements FilmStorage {
     @Override
     public void clearFilms() {
         String sqlDelLikes = "DELETE FROM LIKES";
-        jdbcTemplate.update(sqlDelLikes);
         String sql = "DELETE from FILMS";
-        jdbcTemplate.update(sql);
-        log.info("Удалены все фильмы таблицы FILM");
+        try {
+            jdbcTemplate.update(sqlDelLikes);
+            jdbcTemplate.update(sql);
+            log.info("Удалены все фильмы таблицы FILM");
+        } catch (Exception e) {
+            throw new FilmNotFoundException("Фильм не найден");
+        }
     }
 
     /**
@@ -135,10 +138,10 @@ public class FilmDbStorage implements FilmStorage {
             jdbcTemplate.update(sqlDelLikesId, id);
             String sql = "DELETE from FILMS where ID=?";
             jdbcTemplate.update(sql, id);
+            log.info("Удален фильм: {}", id);o
         } else {
             throw new FilmNotFoundException("Такого фильма нет в базе.");
         }
-        log.info("Удален фильм: {}", id);
     }
 
     /**
