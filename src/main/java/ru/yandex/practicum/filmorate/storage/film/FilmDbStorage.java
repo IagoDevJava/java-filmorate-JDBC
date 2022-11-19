@@ -203,7 +203,7 @@ public class FilmDbStorage implements FilmStorage {
                 .build();
 
         if (film.getName() == null) {
-            return null;
+            film = null;
         }
         return film;
     }
