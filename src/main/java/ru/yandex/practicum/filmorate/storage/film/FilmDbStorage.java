@@ -120,11 +120,11 @@ public class FilmDbStorage implements FilmStorage {
         try {
             String sqlDelLikes = "DELETE FROM LIKES";
             String sqlDelGenres = "DELETE FROM FILM_GENRE";
-            String sqlDelMpa = "DELETE FROM FILM_MPA";
+//            String sqlDelMpa = "DELETE FROM FILM_MPA";
             String sql = "DELETE from FILMS";
             jdbcTemplate.update(sqlDelLikes);
             jdbcTemplate.update(sqlDelGenres);
-            jdbcTemplate.update(sqlDelMpa);
+//            jdbcTemplate.update(sqlDelMpa);
             jdbcTemplate.update(sql);
             log.info("Удалены все фильмы таблицы FILM");
         } catch (Exception e) {

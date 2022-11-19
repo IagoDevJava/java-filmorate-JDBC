@@ -38,7 +38,7 @@ public class FilmoRateApplicationTests {
     @AfterEach
     void tearDown() {
         jdbcTemplate.update("DELETE FROM FILM_GENRE");
-        jdbcTemplate.update("DELETE FROM FILM_MPA");
+//        jdbcTemplate.update("DELETE FROM FILM_MPA");
         jdbcTemplate.update("DELETE FROM LIKES");
         jdbcTemplate.update("DELETE FROM FILMS");
         jdbcTemplate.update("DELETE FROM FRIENDS");
@@ -425,20 +425,20 @@ public class FilmoRateApplicationTests {
                 );
     }
 
-    @Test
-    public void getMpaTest() {
-        jdbcTemplate.update("INSERT INTO FILMS (id, name, description, releasedate, duration) " +
-                "VALUES ( 1, 'Какой-то фильм', 'Какое-то описание', '1900-01-01', '120')");
-        jdbcTemplate.update("INSERT INTO FILM_MPA (film_id, mpa_id) VALUES ( 1, 1)");
-
-        Optional<Mpa> mpaOptional = Optional.ofNullable(mpaStorage.getMpa(1L));
-
-        assertThat(mpaOptional)
-                .isPresent()
-                .hasValueSatisfying(mpa ->
-                        assertThat(mpa).hasFieldOrPropertyWithValue("id", 1L)
-                );
-    }
+//    @Test
+//    public void getMpaTest() {
+//        jdbcTemplate.update("INSERT INTO FILMS (id, name, description, releasedate, duration) " +
+//                "VALUES ( 1, 'Какой-то фильм', 'Какое-то описание', '1900-01-01', '120')");
+//        jdbcTemplate.update("INSERT INTO FILM_MPA (film_id, mpa_id) VALUES ( 1, 1)");
+//
+//        Optional<Mpa> mpaOptional = Optional.ofNullable(mpaStorage.getMpa(1L));
+//
+//        assertThat(mpaOptional)
+//                .isPresent()
+//                .hasValueSatisfying(mpa ->
+//                        assertThat(mpa).hasFieldOrPropertyWithValue("id", 1L)
+//                );
+//    }
 
     @Test
     public void addMpaTest() {
