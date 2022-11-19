@@ -405,19 +405,19 @@ public class FilmoRateApplicationTests {
                 );
     }
 
-//    @Test
-//    public void deleteFilmById() {
-//        Film film = new Film(1L, "Какой-то фильм", "Какое-то описание",
-//                LocalDate.of(1900,01,01),120, null, null, null);
-//        filmStorage.create(film);
-//
-////        filmStorage.deleteFilmById("1");
-//
-//        assertThrows(FilmNotFoundException.class, () -> {
-//            filmStorage.deleteFilmById("1");
-//        });
-//        assertNotNull(filmStorage.findFilmById(1L), "Фильм не удалился");
-//    }
+    @Test
+    public void deleteFilmById() {
+        Film film = new Film(1L, "Какой-то фильм", "Какое-то описание",
+                LocalDate.of(1900,01,01),120, null, null, null);
+        filmStorage.create(film);
+
+//        filmStorage.deleteFilmById("1");
+
+        assertThrows(FilmNotFoundException.class, () -> {
+            filmStorage.deleteFilmById("1");
+        });
+        assertNotNull(filmStorage.findFilmById(1L), "Фильм не удалился");
+    }
 
     // Mpa
     @Test

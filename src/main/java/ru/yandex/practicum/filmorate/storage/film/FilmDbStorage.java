@@ -117,11 +117,11 @@ public class FilmDbStorage implements FilmStorage {
      */
     @Override
     public void clearFilms() {
-        String sqlDelLikes = "DELETE FROM LIKES";
-        String sqlDelGenres = "DELETE FROM FILM_GENRE";
-        String sqlDelMpa = "DELETE FROM FILM_MPA";
-        String sql = "DELETE from FILMS";
         try {
+            String sqlDelLikes = "DELETE FROM LIKES";
+            String sqlDelGenres = "DELETE FROM FILM_GENRE";
+            String sqlDelMpa = "DELETE FROM FILM_MPA";
+            String sql = "DELETE from FILMS";
             jdbcTemplate.update(sqlDelLikes);
             jdbcTemplate.update(sqlDelGenres);
             jdbcTemplate.update(sqlDelMpa);
@@ -137,19 +137,19 @@ public class FilmDbStorage implements FilmStorage {
      */
     @Override
     public void deleteFilmById(String id) {
-//        String sqlDelLikesId = "DELETE FROM LIKES WHERE FILM_ID=?";
-//        String sqlDelGenId = "DELETE FROM FILM_GENRE WHERE FILM_ID=?";
-//        String sqlDelMpa = "DELETE FROM FILM_MPA WHERE FILM_ID=?";
-        String sql = "DELETE from FILMS where ID=?";
-//        try {
-//            jdbcTemplate.update(sqlDelLikesId, id);
-//            jdbcTemplate.update(sqlDelGenId, id);
-//            jdbcTemplate.update(sqlDelMpa);
+        try {
+            String sqlDelLikesId = "DELETE FROM LIKES WHERE FILM_ID=?";
+            String sqlDelGenId = "DELETE FROM FILM_GENRE WHERE FILM_ID=?";
+            String sqlDelMpa = "DELETE FROM FILM_MPA WHERE FILM_ID=?";
+            String sql = "DELETE from FILMS where ID=?";
+            jdbcTemplate.update(sqlDelLikesId, id);
+            jdbcTemplate.update(sqlDelGenId, id);
+            jdbcTemplate.update(sqlDelMpa);
             jdbcTemplate.update(sql, id);
             log.info("Удален фильм: {}", id);
-//        } catch (Exception e){
-//            throw new FilmNotFoundException("Такого фильма нет в базе!!!.");
-//        }
+        } catch (Exception e){
+            throw new FilmNotFoundException("Такого фильма нет в базе!!!.");
+        }
     }
 
     /**
