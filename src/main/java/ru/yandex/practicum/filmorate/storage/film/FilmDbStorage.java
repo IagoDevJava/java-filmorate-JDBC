@@ -137,7 +137,7 @@ public class FilmDbStorage implements FilmStorage {
      */
     @Override
     public void deleteFilmById(String id) {
-        try {
+        if (findFilmById(Long.valueOf(id)) != null) {
 //            String sqlDelLikesId = "DELETE FROM LIKES WHERE FILM_ID=?";
 //            String sqlDelGenId = "DELETE FROM FILM_GENRE WHERE FILM_ID=?";
 //            String sqlDelMpa = "DELETE FROM FILM_MPA WHERE FILM_ID=?";
@@ -147,7 +147,7 @@ public class FilmDbStorage implements FilmStorage {
 //            jdbcTemplate.update(sqlDelMpa);
             jdbcTemplate.update(sql, id);
             log.info("Удален фильм: {}", id);
-        } catch (Exception e){
+        } else {
             throw new FilmNotFoundException("Такого фильма нет в базе.");
         }
     }
