@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jdbc.core.JdbcTemplate;
+import ru.yandex.practicum.filmorate.exception.FilmNotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.model.Mpa;
@@ -22,8 +23,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @AutoConfigureTestDatabase
@@ -403,6 +403,20 @@ public class FilmoRateApplicationTests {
                 .hasValueSatisfying(filmN ->
                         assertThat(film3)
                 );
+    }
+
+    @Test
+    public void deleteFilmById() {
+        Film film = new Film(1L, "Какой-то фильм", "Какое-то описание",
+                LocalDate.of(1900,01,01),120, null, null, null);
+        filmStorage.create(film);
+
+//        filmStorage.deleteFilmById("1");
+
+        assertThrows(FilmNotFoundException.class, () -> {
+            filmStorage.deleteFilmById("1");
+        });
+        assertNotNull(filmStorage.findFilmById(1L), "Фильм не удалился");
     }
 
     // Mpa
