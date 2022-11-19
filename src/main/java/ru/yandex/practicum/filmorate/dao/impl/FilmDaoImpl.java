@@ -242,6 +242,8 @@ public class FilmDaoImpl implements FilmDao {
     public void clearFilms() {
         String sqlDelLikes = "DELETE FROM LIKES";
         jdbcTemplate.update(sqlDelLikes);
+        String sqlDelGenres = "DELETE FROM FILM_GENRE";
+        jdbcTemplate.update(sqlDelGenres);
         String sql = "DELETE from FILM";
         jdbcTemplate.update(sql);
         log.info("Удалены все фильмы таблицы FILM");
@@ -255,6 +257,8 @@ public class FilmDaoImpl implements FilmDao {
         if (findFilmById(idStr).isPresent()) {
             String sqlDelLikesId = "DELETE FROM LIKES WHERE FILM_ID=?";
             jdbcTemplate.update(sqlDelLikesId, idStr);
+            String sqlDelGenreId = "DELETE FROM FILM_GENRE WHERE FILM_ID=?";
+            jdbcTemplate.update(sqlDelGenreId, idStr);
             String sql = "DELETE from FILM where ID=?";
             jdbcTemplate.update(sql, idStr);
         } else {

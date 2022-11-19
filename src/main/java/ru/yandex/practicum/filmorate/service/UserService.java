@@ -20,11 +20,6 @@ public class UserService {
         this.userDao = userDao;
     }
 
-//    @Autowired
-//    public UserService(UserStorage userStorage) {
-//        this.userStorage = userStorage;
-//    }
-
     /**
      * получение списка пользователей
      */
