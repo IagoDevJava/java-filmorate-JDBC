@@ -57,6 +57,13 @@ public class ErrorHandler {
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ResponseEntity<Map<String, String>> handleAlreadyExistException(final AlreadyExistException e) {
+        return new ResponseEntity<>(Map.of("error:", e.getMessage()),
+                HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ResponseEntity<Map<String, String>> handleInvalidNameException(final InvalidNameException e) {
         return new ResponseEntity<>(Map.of("error:", e.getMessage()),
                 HttpStatus.BAD_REQUEST);
