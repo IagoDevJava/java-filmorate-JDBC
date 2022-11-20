@@ -42,13 +42,15 @@ public class ReviewDbStorage implements ReviewStorage {
             log.info("Последний установленный id: {}", idn);
             idn++;
         }
+        review.setReviewId(idn);
+        log.info("Установлен id отзыва: {}", idn);
 
         String sql = "INSERT INTO REVIEWS (id, content, isPositive, user_id, film_id, creationDate) VALUES (?, ?, ?, ?, ?, ?)";
-        jdbcTemplate.update(sql, idn, review.getContent(), review.getIsPositive(), review.getUserId(),
+        jdbcTemplate.update(sql, review.getReviewId(), review.getContent(), review.getIsPositive(), review.getUserId(),
                 review.getFilmId(), Timestamp.valueOf(LocalDateTime.now()));
         log.info("Добавлен новый отзыв: {}", review);
 
-        return findReviewById(idn);
+        return findReviewById(review.getReviewId());
     }
 
     // обновить отзыв
@@ -60,10 +62,10 @@ public class ReviewDbStorage implements ReviewStorage {
                 , review.getContent()
                 , review.getIsPositive()
                 , Timestamp.valueOf(LocalDateTime.now())
-                , review.getId());
+                , review.getReviewId());
         log.info("Отзыв обновлен: {}", review);
 
-        return findReviewById(review.getId());
+        return findReviewById(review.getReviewId());
     }
 
     // удалить отзыв
@@ -96,7 +98,7 @@ public class ReviewDbStorage implements ReviewStorage {
     // приват - билдер отзыва
     private Review makeReview(ResultSet rs) throws SQLException {
         Review review = Review.builder()
-                .id(rs.getLong("id"))
+                .reviewId(rs.getLong("id"))
                 .content(rs.getString("content"))
                 .isPositive(rs.getBoolean("isPositive"))
                 .userId(rs.getLong("user_id"))

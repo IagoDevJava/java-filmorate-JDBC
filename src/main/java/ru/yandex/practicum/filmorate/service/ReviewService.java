@@ -44,7 +44,7 @@ public class ReviewService {
     // обновить отзыв
     public Review update(Review review) {
         ReviewValidator.isValidReview(review);
-        IdValidator.isValidId(review.getId());
+        IdValidator.isValidId(review.getReviewId());
         filmStorage.findFilmById(review.getFilmId());
         userStorage.findUserById(review.getUserId());
 
@@ -96,7 +96,7 @@ public class ReviewService {
         reviewStorage.deleteLike(id, userId);
         log.info("Удален лайк/дизлайк озыву с id {} от пользователя {}", id, userId);
 
-        reviewStorage.addLike(id, userId, useful);
+        reviewStorage.addLike(id, userId, 0);
         log.info("Отзыву с id {} поставлен лайк/дизлайк пользователем {}", id, userId);
         return String.format("Отзыву с id %d поставлен лайк/дизлайк пользователем с id %d", id, userId);
 

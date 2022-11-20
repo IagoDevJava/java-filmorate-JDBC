@@ -9,7 +9,7 @@ import java.util.Objects;
 @Data
 @Builder
 public class Review {
-    Long id;
+    Long reviewId;
     String content;
     Boolean isPositive;
     Long userId;
@@ -17,8 +17,8 @@ public class Review {
     Long useful;
     LocalDateTime creationDate;
 
-    public Review(Long id, String content, Boolean isPositive, Long userId, Long filmId, Long useful, LocalDateTime creationDate) {
-        this.id = id;
+    public Review(Long reviewId, String content, Boolean isPositive, Long userId, Long filmId, Long useful, LocalDateTime creationDate) {
+        this.reviewId = reviewId;
         this.content = content;
         this.isPositive = isPositive;
         this.userId = userId;

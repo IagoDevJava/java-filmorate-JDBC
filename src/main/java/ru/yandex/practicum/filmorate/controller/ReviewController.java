@@ -3,7 +3,6 @@ package ru.yandex.practicum.filmorate.controller;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Review;
 import ru.yandex.practicum.filmorate.service.ReviewService;
 
@@ -31,7 +30,7 @@ public class ReviewController {
     // PUT/reviews - обновить отзыв
     @PutMapping
     public Review update(@Valid @RequestBody Review review) {
-        log.info("Получен запрос PUT/reviews - обновление отзыва с id {}", review.getId());
+        log.info("Получен запрос PUT/reviews - обновление отзыва с id {}", review.getReviewId());
         return reviewService.update(review);
     }
 
