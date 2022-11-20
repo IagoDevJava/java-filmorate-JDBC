@@ -223,15 +223,6 @@ public class FilmDbStorage implements FilmStorage {
         }
         return film;
     }
-
-private Long makeUserId(ResultSet rs) throws SQLException {
-        Long l = rs.getLong("user_id");
-
-        if (l == null) {
-            return null;
-        }
-        return l;
-    }
     
     private List<Long> getIdFilms(Integer count) {
         log.info("Получение списка id пользователей, поставивших лайки");
