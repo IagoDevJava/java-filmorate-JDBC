@@ -243,7 +243,7 @@ public class FilmService {
         }
         if (filmStorage.findPopularFilms(count, genreId, year) != null) {
             log.info("Список популярных фильмов сформирован");
-            return filmStorage.findPopularFilms(count, genreId);
+            return filmStorage.findPopularFilms(count, genreId, year);
         } else {
             log.info("Популярных фильмов нет :( ");
             return null;
