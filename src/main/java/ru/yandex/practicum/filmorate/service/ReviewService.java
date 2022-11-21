@@ -96,7 +96,7 @@ public class ReviewService {
         reviewStorage.deleteLike(id, userId);
         log.info("Удален лайк/дизлайк озыву с id {} от пользователя {}", id, userId);
 
-        reviewStorage.addLike(id, userId, 0);
+        reviewStorage.addLike(id, userId, useful);
         log.info("Отзыву с id {} поставлен лайк/дизлайк пользователем {}", id, userId);
         return String.format("Отзыву с id %d поставлен лайк/дизлайк пользователем с id %d", id, userId);
 

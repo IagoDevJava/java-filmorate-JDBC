@@ -116,13 +116,15 @@ public class ReviewDbStorage implements ReviewStorage {
     // получить отзывы
     @Override
     public List<Review> findAll(Integer count) {
-        log.info("Получение списка отзывов в количестве %d", count);
-        String sql = "select t.*, SUM(l.useful) as useful " +
+        log.info("Получение списка отзывов в количестве {}", count);
+        String sql = "select t.*, " +
+                "CASE WHEN l.useful IS NULL THEN 0 " +
+                "ELSE SUM(l.useful) END as useful " +
                 "from REVIEWS as t " +
                 "LEFT OUTER JOIN REVIEW_LIKES as l " +
                 "ON t.id = l.review_id " +
                 "group by t.film_id, t.id " +
-                "order by SUM(l.useful) DESC LIMIT " + count;
+                "order by useful DESC LIMIT " + count;
         return jdbcTemplate.query(sql, (rs, rowNum) -> makeReview(rs));
     }
 
@@ -141,7 +143,7 @@ public class ReviewDbStorage implements ReviewStorage {
     // получить список отзывов по id фильма
     @Override
     public List<Review> findAllByFilmId(Long filmId, Integer count) {
-        log.info("Получение списка отзывов для фильма с id %d в количестве %d", filmId, count);
+        log.info("Получение списка отзывов для фильма с id {} в количестве {}", filmId, count);
         String sql = "select t.*, SUM(l.useful) as useful " +
                 "from REVIEWS as t " +
                 "LEFT OUTER JOIN REVIEW_LIKES as l " +
