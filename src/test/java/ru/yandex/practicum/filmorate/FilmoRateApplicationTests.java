@@ -246,7 +246,7 @@ public class FilmoRateApplicationTests {
     @Test
     public void createFilmTest() {
         Film film = new Film(1L, "Какой-то фильм", "Какое-то описание",
-                LocalDate.of(1900,01,01),120, null, null, null);
+                LocalDate.of(1900,01,01),120, null, null, null, null);
 
         Optional<Film> filmOptional = Optional.ofNullable(filmStorage.create(film));
 
@@ -260,7 +260,7 @@ public class FilmoRateApplicationTests {
     @Test
     public void updateFilmTest() {
         Film film = new Film(1L, "Какой-то фильм", "Какое-то описание",
-                LocalDate.of(1900,01,01),120, null, null, null);
+                LocalDate.of(1900,01,01),120, null, null, null, null);
 
         Optional<Film> filmOptional = Optional.ofNullable(filmStorage.create(film));
 
@@ -271,7 +271,7 @@ public class FilmoRateApplicationTests {
                 );
 
         Film film2 = new Film(1L, "Какой-то НОВЫЙ фильм", "Какое-то еще описание",
-                LocalDate.of(1900,01,01),120, null, null, null);
+                LocalDate.of(1900,01,01),120, null, null, null, null);
 
         Optional<Film> filmOptional2 = Optional.ofNullable(filmStorage.update(film2));
 
@@ -289,10 +289,10 @@ public class FilmoRateApplicationTests {
         assertEquals(0, list.size(), "Неверное количество элементов");
 
         Film film = new Film(1L, "Какой-то фильм", "Какое-то описание",
-                LocalDate.of(1900,01,01),120, null, null, null);
+                LocalDate.of(1900,01,01),120, null, null, null, null);
         filmStorage.create(film);
         Film film2 = new Film(2L, "Какой-то НОВЫЙ фильм", "Какое-то еще описание",
-                LocalDate.of(1900,01,01),120, null, null, null);
+                LocalDate.of(1900,01,01),120, null, null, null, null);
         filmStorage.create(film2);
 
         List<Film> list2 = filmStorage.findAll();
@@ -369,7 +369,7 @@ public class FilmoRateApplicationTests {
         userStorage.create(user1);
 
         Film film = new Film(1L, "Какой-то фильм", "Какое-то описание",
-                LocalDate.of(1900,01,01),120, null, null, null);
+                LocalDate.of(1900,01,01),120, null, null, null, null);
         filmStorage.create(film);
 
         filmStorage.addLike(1L, 1L);
@@ -386,7 +386,7 @@ public class FilmoRateApplicationTests {
         userStorage.create(user1);
 
         Film film = new Film(1L, "Какой-то фильм", "Какое-то описание",
-                LocalDate.of(1900,01,01),120, null, null, null);
+                LocalDate.of(1900,01,01),120, null, null, null, null);
         filmStorage.create(film);
 
         filmStorage.addLike(1L, 1L);
@@ -403,13 +403,13 @@ public class FilmoRateApplicationTests {
     @Test
     public void findPopularFilmsTest() {
         Film film = new Film(1L, "Какой-то фильм", "Какое-то описание",
-                LocalDate.of(1900,01,01),120, null, null, null);
+                LocalDate.of(1900,01,01),120, null, null, null, null);
         filmStorage.create(film);
         Film film2 = new Film(2L, "Какой-то НОВЫЙ фильм", "Какое-то еще описание",
-                LocalDate.of(1900,01,01),120, null, null, null);
+                LocalDate.of(1900,01,01),120, null, null, null, null);
         filmStorage.create(film2);
         Film film3 = new Film(3L, "Какой-то еще один НОВЫЙ фильм", "Какое-то еще одно описание",
-                LocalDate.of(1900,01,01),120, null, null, null);
+                LocalDate.of(1900,01,01),120, null, null, null, null);
         filmStorage.create(film3);
 
         User user1 = new User(1L, "login1", "name1", "ya1@ya.ru",
@@ -489,7 +489,7 @@ public class FilmoRateApplicationTests {
     @Test
     public void addMpaTest() {
         Film film = new Film(1L, "Какой-то фильм", "Какое-то описание",
-              LocalDate.of(1900,01,01),120, null, new Mpa(1L, "G"), null);
+              LocalDate.of(1900,01,01),120, null, new Mpa(1L, "G"), null, null);
 
         jdbcTemplate.update("INSERT INTO FILMS (id, name, description, releasedate, duration) " +
                 "VALUES ( 1, 'Какой-то фильм', 'Какое-то описание', '1900-01-01', '120')");
@@ -506,7 +506,7 @@ public class FilmoRateApplicationTests {
     @Test
     public void updateMpaTest() {
         Film film = new Film(1L, "Какой-то фильм", "Какое-то описание",
-                LocalDate.of(1900,01,01),120, null, new Mpa(1L, "G"), null);
+                LocalDate.of(1900,01,01),120, null, new Mpa(1L, "G"), null, null);
 
         jdbcTemplate.update("INSERT INTO FILMS (id, name, description, releasedate, duration) " +
                 "VALUES ( 1, 'Какой-то фильм', 'Какое-то описание', '1900-01-01', '120')");
@@ -521,7 +521,7 @@ public class FilmoRateApplicationTests {
                 );
 
         Film film2 = new Film(1L, "Какой-то фильм", "Какое-то описание",
-                LocalDate.of(1900,01,01),120, null, new Mpa(2L, "PG"), null);
+                LocalDate.of(1900,01,01),120, null, new Mpa(2L, "PG"), null, null);
 
         mpaStorage.updateMpa(film2);
         Optional<Mpa> mpaOptional2 = Optional.ofNullable(mpaStorage.getMpa(1L));
@@ -573,7 +573,7 @@ public class FilmoRateApplicationTests {
         l.add(g);
 
         Film film = new Film(1L, "Какой-то фильм", "Какое-то описание",
-                LocalDate.of(1900,01,01),120, null, null, l);
+                LocalDate.of(1900,01,01),120, null, null, l,  null);
 
         jdbcTemplate.update("INSERT INTO FILMS (id, name, description, releasedate, duration) " +
                 "VALUES ( 1, 'Какой-то фильм', 'Какое-то описание', '1900-01-01', '120')");
@@ -599,7 +599,7 @@ public class FilmoRateApplicationTests {
         l.add(g);
 
         Film film = new Film(1L, "Какой-то фильм", "Какое-то описание",
-                LocalDate.of(1900,01,01),120, null, null, l);
+                LocalDate.of(1900,01,01),120, null, null, l, null);
 
         jdbcTemplate.update("INSERT INTO FILMS (id, name, description, releasedate, duration) " +
                 "VALUES ( 1, 'Какой-то фильм', 'Какое-то описание', '1900-01-01', '120')");
@@ -622,7 +622,7 @@ public class FilmoRateApplicationTests {
         l.add(g2);
 
         Film film2 = new Film(1L, "Какой-то фильм", "Какое-то описание",
-                LocalDate.of(1900,01,01),120, null, null, l2);
+                LocalDate.of(1900,01,01),120, null, null, l2, null);
 
         genreStorage.addGenre(film2);
 
