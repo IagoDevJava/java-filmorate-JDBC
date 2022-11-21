@@ -15,8 +15,8 @@ import java.util.List;
 @Service
 @Slf4j
 public class FilmService {
-    private FilmStorage filmStorage;
-    private UserStorage userStorage;
+    private final FilmStorage filmStorage;
+    private final UserStorage userStorage;
 
     @Autowired
     public FilmService(FilmStorage filmStorage, UserStorage userStorage) {
@@ -203,6 +203,16 @@ public class FilmService {
             return filmStorage.findPopularFilms(count);
         } else {
             log.info("Популярных фильмов нет :( ");
+            return null;
+        }
+    }
+
+    public List<Film> findDirectorFilms(Long directorId, String sort){
+        if(filmStorage.findDirectorFilms(directorId,sort)!=null){
+            log.info("Список фильмов режиссера сформирован");
+            return filmStorage.findDirectorFilms(directorId,sort);
+        } else {
+            log.info("У режиссера нет фильмов :(");
             return null;
         }
     }

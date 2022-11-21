@@ -6,29 +6,33 @@ import java.util.List;
 
 public interface FilmStorage {
 
-    public Film create(Film film);
+    Film create(Film film);
 
-    public Film update(Film film);
+    Film update(Film film);
 
-    public List<Film> findAll();
+    List<Film> findAll();
 
-    public Film findFilmById(Long id);
+    Film findFilmById(Long id);
 
     /**
      * Очистить список фильмов
      */
-    public void clearFilms();
+    void clearFilms();
 
     /**
      * Удаление фильма по id
      */
-    public void deleteFilmById(String id);
+    void deleteFilmById(String id);
 
-    public String addLike(Long id, Long userId);
+    String addLike(Long id, Long userId);
 
-    public boolean deleteLike(Long id, Long userId);
+    boolean deleteLike(Long id, Long userId);
 
     List<Film> commonFilmsList(Long userId, Long friendId);
 
-    public List<Film> findPopularFilms(Integer count);
+    List<Film> findPopularFilms(Integer count);
+
+    List<Film> findDirectorFilms(Long directorId, String sort);
+
+
 }
