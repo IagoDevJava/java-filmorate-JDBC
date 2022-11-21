@@ -2,7 +2,6 @@ package ru.yandex.practicum.filmorate.storage.film;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Primary;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Component;
@@ -204,6 +203,47 @@ public class FilmDbStorage implements FilmStorage {
             list.add(findFilmById(l));
         }
         return list;
+    }
+
+    // поиск популярных фильмов по году
+    @Override
+    public List<Film> findPopularFilms(Integer count, Integer year) {
+        String sql = "SELECT f.* " +
+                "FROM LIKES AS l " +
+                "RIGHT OUTER JOIN FILMS AS f ON l.FILM_ID = f.ID " +
+                "WHERE EXTRACT(YEAR FROM f.RELEASEDATE) = ? " +
+                "GROUP BY f.ID " +
+                "ORDER BY COUNT(l.USER_ID) DESC LIMIT ?";
+
+        return jdbcTemplate.query(sql, (rs, rowNum) -> makeFilm(rs), year, count);
+    }
+
+    // поиск популярных фильмов по жанру
+    @Override
+    public List<Film> findPopularFilms(Integer count, Long genreId) {
+        String sql = "SELECT f.* " +
+                "FROM LIKES AS l " +
+                "RIGHT OUTER JOIN FILMS AS f ON l.FILM_ID = f.ID " +
+                "LEFT OUTER JOIN FILM_GENRE fg on f.ID = FG.FILM_ID " +
+                "WHERE fg.GENRE_ID = ? " +
+                "GROUP BY f.ID " +
+                "ORDER BY COUNT(l.USER_ID) DESC LIMIT ?";
+
+        return jdbcTemplate.query(sql, (rs, rowNum) -> makeFilm(rs), genreId, count);
+    }
+
+    // поиск популярных фильмов по году и жанру
+    @Override
+    public List<Film> findPopularFilms(Integer count, Long genreId, Integer year) {
+        String sql = "SELECT f.* " +
+                "FROM LIKES AS l " +
+                "RIGHT OUTER JOIN FILMS AS f ON l.FILM_ID = f.ID " +
+                "LEFT OUTER JOIN FILM_GENRE fg on f.ID = FG.FILM_ID " +
+                "WHERE fg.GENRE_ID = ? AND EXTRACT(YEAR FROM f.RELEASEDATE) = ?" +
+                "GROUP BY f.ID " +
+                "ORDER BY COUNT(l.USER_ID) DESC LIMIT ?";
+
+        return jdbcTemplate.query(sql, (rs, rowNum) -> makeFilm(rs), genreId, year, count);
     }
 
     private Film makeFilm(ResultSet rs) throws SQLException {
