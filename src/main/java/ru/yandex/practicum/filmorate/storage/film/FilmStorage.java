@@ -30,9 +30,19 @@ public interface FilmStorage {
 
     List<Film> commonFilmsList(Long userId, Long friendId);
 
-    List<Film> findPopularFilms(Integer count);
 
+    List<Film> findPopularFilms(Integer count);
+    
+    //поиск фильмов режиссера
     List<Film> findDirectorFilms(Long directorId, String sort);
 
+    // поиск популярных фильмов по году
+    List<Film> findPopularFilms(Integer count, Integer year);
+
+    // поиск популярных фильмов по жанру
+    List<Film> findPopularFilms(Integer count, Long genreId);
+
+    // поиск популярных фильмов по году и жанру
+    List<Film> findPopularFilms(Integer count, Long genreId, Integer year);
 
 }
