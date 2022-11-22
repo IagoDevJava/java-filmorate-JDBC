@@ -296,41 +296,44 @@ public class FilmDbStorage implements FilmStorage {
     }
 
 
+
+
     @Override
-    public List<Film> searchFilm(String query, List<String> values) {
-        if (values.contains("director") && !values.contains("title")) {
-            String sql = "select F.*\n" +
-                    "from LIKES\n" +
-                    "RIGHT JOIN FILMS F on F.ID = LIKES.FILM_ID\n" +
-                    "LEFT JOIN FILM_DIRECTOR FD on F.ID = FD.FILM_ID\n" +
-                    "left JOIN DIRECTORS D on D.ID = FD.DIRECTOR_ID\n" +
-                    "where LOCATE(LOWER(?), LOWER(D.NAME)) > 0\n" +
-                    "GROUP BY F.ID\n" +
-                    "ORDER BY COUNT(USER_ID) desc";
-            return jdbcTemplate.query(sql, (rs, rowNum) -> makeFilm(rs), query);
-        }
-        if (!values.contains("director") && values.contains("title")) {
-            String sql = "select F.*\n" +
-                    "from LIKES\n" +
-                    "RIGHT JOIN FILMS F on F.ID = LIKES.FILM_ID\n" +
-                    "where LOCATE(LOWER(?), LOWER(NAME)) > 0\n" +
-                    "GROUP BY ID\n" +
-                    "ORDER BY COUNT(USER_ID) desc";
-            return jdbcTemplate.query(sql, (rs, rowNum) -> makeFilm(rs), query);
-        }
-        if ((values.contains("director") && values.contains("title")) || values.isEmpty()) {
-            String sql = "select F.*\n" +
-                    "from LIKES\n" +
-                    "RIGHT JOIN FILMS F on F.ID = LIKES.FILM_ID\n" +
-                    "left join FILM_DIRECTOR FD on F.ID = FD.FILM_ID\n" +
-                    "left join DIRECTORS D on D.ID = FD.DIRECTOR_ID\n" +
-                    "where LOCATE(LOWER(?), LOWER(F.NAME)) > 0 or\n" +
-                    "      LOCATE(LOWER(?), LOWER(D.NAME)) > 0\n" +
-                    "GROUP BY F.ID\n" +
-                    "ORDER BY COUNT(USER_ID) desc";
-            return jdbcTemplate.query(sql, (rs, rowNum) -> makeFilm(rs), query, query);
-        }
-        return Collections.emptyList();
+    public List<Film> searchFilmByDirector(String query, List<String> values) {
+        String sql = "select F.*\n" +
+                "from LIKES\n" +
+                "RIGHT JOIN FILMS F on F.ID = LIKES.FILM_ID\n" +
+                "LEFT JOIN FILM_DIRECTOR FD on F.ID = FD.FILM_ID\n" +
+                "left JOIN DIRECTORS D on D.ID = FD.DIRECTOR_ID\n" +
+                "where LOCATE(LOWER(?), LOWER(D.NAME)) > 0\n" +
+                "GROUP BY F.ID\n" +
+                "ORDER BY COUNT(USER_ID) desc";
+        return jdbcTemplate.query(sql, (rs, rowNum) -> makeFilm(rs), query);
+    }
+
+    @Override
+    public List<Film> searchFilmByTitle(String query, List<String> values) {
+        String sql = "select F.*\n" +
+                "from LIKES\n" +
+                "RIGHT JOIN FILMS F on F.ID = LIKES.FILM_ID\n" +
+                "where LOCATE(LOWER(?), LOWER(NAME)) > 0\n" +
+                "GROUP BY ID\n" +
+                "ORDER BY COUNT(USER_ID) desc";
+        return jdbcTemplate.query(sql, (rs, rowNum) -> makeFilm(rs), query);
+    }
+
+    @Override
+    public List<Film> searchFilmByTitleAndDirector(String query, List<String> values) {
+        String sql = "select F.*\n" +
+                "from LIKES\n" +
+                "RIGHT JOIN FILMS F on F.ID = LIKES.FILM_ID\n" +
+                "left join FILM_DIRECTOR FD on F.ID = FD.FILM_ID\n" +
+                "left join DIRECTORS D on D.ID = FD.DIRECTOR_ID\n" +
+                "where LOCATE(LOWER(?), LOWER(F.NAME)) > 0 or\n" +
+                "      LOCATE(LOWER(?), LOWER(D.NAME)) > 0\n" +
+                "GROUP BY F.ID\n" +
+                "ORDER BY COUNT(USER_ID) desc";
+        return jdbcTemplate.query(sql, (rs, rowNum) -> makeFilm(rs), query, query);
     }
 
     private Film makeFilm(ResultSet rs) throws SQLException {

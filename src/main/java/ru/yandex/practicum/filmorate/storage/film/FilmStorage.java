@@ -32,7 +32,7 @@ public interface FilmStorage {
 
 
     List<Film> findPopularFilms(Integer count);
-    
+
     //поиск фильмов режиссера
     List<Film> findDirectorFilms(Long directorId, String sort);
 
@@ -45,6 +45,10 @@ public interface FilmStorage {
     // поиск популярных фильмов по году и жанру
     List<Film> findPopularFilms(Integer count, Long genreId, Integer year);
 
-    List<Film> searchFilm(String query, List<String> values);
+    List<Film> searchFilmByDirector(String query, List<String> values);
+
+    List<Film> searchFilmByTitle(String query, List<String> values);
+
+    List<Film> searchFilmByTitleAndDirector(String query, List<String> values);
 
 }

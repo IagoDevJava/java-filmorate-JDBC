@@ -133,7 +133,13 @@ public class FilmController {
 
     @GetMapping("/search")
     public List<Film> searchFilm(@RequestParam String query, @RequestParam List<String> by){
-        return filmService.searchFilm(query,by);
+        if (by.contains("director") && !by.contains("title")) {
+            return filmService.searchFilmByDirector(query,by);
+        }
+        if (!by.contains("director") && by.contains("title")) {
+            return filmService.searchFilmByTitle(query, by);
+        }
+        return filmService.searchFilmByTitleAndDirector(query,by);
     }
 
 }
