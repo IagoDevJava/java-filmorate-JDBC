@@ -17,8 +17,8 @@ import java.util.List;
 @Service
 @Slf4j
 public class FilmService {
-    private FilmStorage filmStorage;
-    private UserStorage userStorage;
+    private final FilmStorage filmStorage;
+    private final UserStorage userStorage;
 
     @Autowired
     public FilmService(FilmStorage filmStorage, UserStorage userStorage) {
@@ -138,6 +138,17 @@ public class FilmService {
         }
     }
 
+
+    public List<Film> findDirectorFilms(Long directorId, String sort){
+        if(filmStorage.findDirectorFilms(directorId,sort)!=null){
+            log.info("Список фильмов режиссера сформирован");
+            return filmStorage.findDirectorFilms(directorId,sort);
+        } else {
+            log.info("У режиссера нет фильмов :(");
+            return null;
+            }
+        }
+
     // поиск популярных фильмов по году
     public List<Film> findPopularFilms(Integer count, Integer year) {
         if (count <= 0) {
@@ -149,7 +160,21 @@ public class FilmService {
             return filmStorage.findPopularFilms(count, year);
         } else {
             log.info("Популярных фильмов нет :( ");
+
             return null;
+        }
+    }
+
+
+    private void checkId(Long id, Long userId) {
+        if (id == null || id < 1) {
+            log.info("Фильм с пустым или отрицательным id {}", id);
+            throw new InvalidIdException("Фильм с пустым или отрицательным id");
+        }
+
+        if (userId == null || userId < 1) {
+            log.info("Пользователь с пустым или отрицательным id {}", userId);
+            throw new InvalidIdException("Пользователь с пустым или отрицательным id");
         }
     }
 
@@ -157,6 +182,7 @@ public class FilmService {
     public List<Film> findPopularFilms(Integer count, Long genreId) {
         if (count <= 0) {
             throw new IncorrectCountException("count");
+
         }
         if (filmStorage.findPopularFilms(count, genreId) != null) {
             log.info("Список популярных фильмов сформирован");

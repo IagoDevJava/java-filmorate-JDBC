@@ -121,4 +121,14 @@ public class FilmController {
         }
     }
 
+    @GetMapping("/director/{directorId}")
+    public List<Film> findFilmOfDirector(@PathVariable Long directorId, @RequestParam String sortBy) {
+        if(sortBy.equals("likes")){
+            log.info("GET /films/director/{directorId}?sortBy=likes");
+        } else {
+            log.info("GET /films/director/{directorId}?sortBy=year");
+        }
+        return filmService.findDirectorFilms(directorId,sortBy);
+    }
+
 }
