@@ -226,7 +226,7 @@ public class FilmDbStorage implements FilmStorage {
 
     @Override
     public List<Film> findDirectorFilms(Long directorId, String sort) {
-        if(directorStorage.findDirectorById(directorId)!=null) {
+        if (directorStorage.findDirectorById(directorId) != null) {
             if (sort.equals("year")) {
                 String sql = "select f.*\n" +
                         "from FILM_DIRECTOR as fd\n" +
@@ -251,6 +251,7 @@ public class FilmDbStorage implements FilmStorage {
         }
 
         return Collections.emptyList();
+    }
 
     // поиск популярных фильмов по году
     @Override
