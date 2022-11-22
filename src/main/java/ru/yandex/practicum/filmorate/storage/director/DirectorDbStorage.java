@@ -32,7 +32,7 @@ public class DirectorDbStorage implements DirectorStorage {
     public List<Director> findAll() {
         try {
             String sql = "SELECT * FROM DIRECTORS";
-            return jdbcTemplate.query(sql, (rs, rowNum) -> makeDirector(rs));
+            return jdbcTemplate.query(sql, this::makeDirector);
         } catch (Exception e) {
             return Collections.emptyList();
         }
@@ -42,7 +42,7 @@ public class DirectorDbStorage implements DirectorStorage {
     public Director findDirectorById(Long id) {
         String sql = "SELECT * FROM DIRECTORS WHERE id = ?";
         try {
-            return jdbcTemplate.queryForObject(sql, (rs, rowNum) -> makeDirector(rs), id);
+            return jdbcTemplate.queryForObject(sql, this::makeDirector, id);
         } catch (Exception e) {
             throw new DirectorNotFoundException(String.format("Режиссер с id = %d не найден", id));
         }
@@ -65,7 +65,6 @@ public class DirectorDbStorage implements DirectorStorage {
 
         String sql = "INSERT INTO DIRECTORS (id,name) VALUES (?,?)";
         jdbcTemplate.update(sql, director.getId(), director.getName());
-
 
         return director;
     }
@@ -105,34 +104,34 @@ public class DirectorDbStorage implements DirectorStorage {
     public List<Director> getDirectors(Long id) {
         log.info("Получение List<Director> фильма с id = {}", id);
         List<Director> list = new ArrayList<>();
-        if(getDirectorsId(id) != null){
-            for (Long directorId : getDirectorsId(id)){
+        if (getDirectorsId(id) != null) {
+            for (Long directorId : getDirectorsId(id)) {
                 list.add(findDirectorById(directorId));
             }
         }
         return list;
     }
 
-    private List<Long> getDirectorsId(Long id){
-        String sql = "SELECT director_id from FILM_DIRECTOR where film_id = ?";
-        try{
-            return jdbcTemplate.query(sql, (rs, rowNum) -> makeDirectorsId(rs),id);
-        } catch (EmptyResultDataAccessException e){
-            return null;
-        }
-    }
-
-    private Long makeDirectorsId(ResultSet rs) throws SQLException{
-        return rs.getLong("director_id");
-    }
     @Override
     public void clearDirectors(Film film) {
         String sql = "DELETE FROM FILM_DIRECTOR where film_id = ?";
         jdbcTemplate.update(sql, film.getId());
     }
 
+    private List<Long> getDirectorsId(Long id) {
+        String sql = "SELECT director_id from FILM_DIRECTOR where film_id = ?";
+        try {
+            return jdbcTemplate.query(sql, this::makeDirectorsId, id);
+        } catch (EmptyResultDataAccessException e) {
+            return null;
+        }
+    }
 
-    private Director makeDirector(ResultSet rs) throws SQLException {
+    private Long makeDirectorsId(ResultSet rs, int rowNum) throws SQLException {
+        return rs.getLong("director_id");
+    }
+
+    private Director makeDirector(ResultSet rs, int rowNum) throws SQLException {
         return Director.builder()
                 .id(rs.getLong("id"))
                 .name(rs.getString("name"))
