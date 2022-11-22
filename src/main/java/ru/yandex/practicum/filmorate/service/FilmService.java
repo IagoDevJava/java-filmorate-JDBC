@@ -3,14 +3,16 @@ package ru.yandex.practicum.filmorate.service;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import ru.yandex.practicum.filmorate.exception.*;
+import ru.yandex.practicum.filmorate.exception.FilmAlreadyExistException;
+import ru.yandex.practicum.filmorate.exception.IncorrectCountException;
+import ru.yandex.practicum.filmorate.exception.InvalidIdException;
+import ru.yandex.practicum.filmorate.exception.UserNotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 import ru.yandex.practicum.filmorate.validator.FilmValidator;
 import ru.yandex.practicum.filmorate.validator.IdValidator;
 
-import java.time.LocalDate;
 import java.util.List;
 
 
@@ -205,5 +207,10 @@ public class FilmService {
             log.info("Популярных фильмов нет :( ");
             return null;
         }
+    }
+
+    // поиск фильма по режиссеру или названию
+    public List<Film> searchFilm(String query, List<String> values){
+        return filmStorage.searchFilm(query,values);
     }
 }

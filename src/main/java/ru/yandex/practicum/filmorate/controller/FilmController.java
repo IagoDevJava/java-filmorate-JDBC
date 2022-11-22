@@ -131,4 +131,9 @@ public class FilmController {
         return filmService.findDirectorFilms(directorId,sortBy);
     }
 
+    @GetMapping("/search")
+    public List<Film> searchFilm(@RequestParam String query, @RequestParam List<String> by){
+        return filmService.searchFilm(query,by);
+    }
+
 }

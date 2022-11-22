@@ -295,6 +295,44 @@ public class FilmDbStorage implements FilmStorage {
 
     }
 
+
+    @Override
+    public List<Film> searchFilm(String query, List<String> values) {
+        if (values.contains("director") && !values.contains("title")) {
+            String sql = "select F.*\n" +
+                    "from LIKES\n" +
+                    "RIGHT JOIN FILMS F on F.ID = LIKES.FILM_ID\n" +
+                    "LEFT JOIN FILM_DIRECTOR FD on F.ID = FD.FILM_ID\n" +
+                    "left JOIN DIRECTORS D on D.ID = FD.DIRECTOR_ID\n" +
+                    "where LOCATE(LOWER(?), LOWER(D.NAME)) > 0\n" +
+                    "GROUP BY F.ID\n" +
+                    "ORDER BY COUNT(USER_ID) desc";
+            return jdbcTemplate.query(sql, (rs, rowNum) -> makeFilm(rs), query);
+        }
+        if (!values.contains("director") && values.contains("title")) {
+            String sql = "select F.*\n" +
+                    "from LIKES\n" +
+                    "RIGHT JOIN FILMS F on F.ID = LIKES.FILM_ID\n" +
+                    "where LOCATE(LOWER(?), LOWER(NAME)) > 0\n" +
+                    "GROUP BY ID\n" +
+                    "ORDER BY COUNT(USER_ID) desc";
+            return jdbcTemplate.query(sql, (rs, rowNum) -> makeFilm(rs), query);
+        }
+        if ((values.contains("director") && values.contains("title")) || values.isEmpty()) {
+            String sql = "select F.*\n" +
+                    "from LIKES\n" +
+                    "RIGHT JOIN FILMS F on F.ID = LIKES.FILM_ID\n" +
+                    "left join FILM_DIRECTOR FD on F.ID = FD.FILM_ID\n" +
+                    "left join DIRECTORS D on D.ID = FD.DIRECTOR_ID\n" +
+                    "where LOCATE(LOWER(?), LOWER(F.NAME)) > 0 or\n" +
+                    "      LOCATE(LOWER(?), LOWER(D.NAME)) > 0\n" +
+                    "GROUP BY F.ID\n" +
+                    "ORDER BY COUNT(USER_ID) desc";
+            return jdbcTemplate.query(sql, (rs, rowNum) -> makeFilm(rs), query, query);
+        }
+        return Collections.emptyList();
+    }
+
     private Film makeFilm(ResultSet rs) throws SQLException {
         Film film = Film.builder()
                 .id(rs.getLong("id"))
@@ -327,12 +365,8 @@ public class FilmDbStorage implements FilmStorage {
     }
 
     private Long makeFilmId(ResultSet rs) throws SQLException {
-        Long l = rs.getLong("id");
 
-        if (l == null) {
-            return null;
-        }
-        return l;
+        return rs.getLong("id");
     }
 
     private Long getCountLikes(Long id) {
@@ -343,12 +377,8 @@ public class FilmDbStorage implements FilmStorage {
     }
 
     private Long makeUserId(ResultSet rs) throws SQLException {
-        Long l = rs.getLong("user_id");
 
-        if (l == null) {
-            return null;
-        }
-        return l;
+        return rs.getLong("user_id");
     }
 
     private List<Long> getLikes(Long id) {
