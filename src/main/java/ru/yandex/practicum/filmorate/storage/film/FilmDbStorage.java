@@ -30,7 +30,12 @@ public class FilmDbStorage implements FilmStorage {
 
     private final DirectorStorage directorStorage;
 
-    public FilmDbStorage(JdbcTemplate jdbcTemplate, MpaStorage mpaStorage, GenreStorage genreStorage, DirectorStorage directorStorage) {
+    public FilmDbStorage(
+            JdbcTemplate jdbcTemplate,
+            MpaStorage mpaStorage,
+            GenreStorage genreStorage,
+            DirectorStorage directorStorage
+    ) {
         this.jdbcTemplate = jdbcTemplate;
         this.mpaStorage = mpaStorage;
         this.genreStorage = genreStorage;
@@ -358,4 +363,21 @@ public class FilmDbStorage implements FilmStorage {
         return jdbcTemplate.query(sql, (rs, rowNum) -> makeUserId(rs), id);
     }
 
+    /**
+     * Метод возвращает отсортированный список фильмов по ID,
+     * то есть в каком порядке были ID, в том же порядке будет и список фильмов
+     */
+    @Override
+    public List<Film> findFilmsByIdsOrdered(List<Long> ids) {
+        StringBuilder valuesSb = new StringBuilder();
+        for (int i = 0; i < ids.size(); i++) {
+            valuesSb.append("(").append(ids.get(i)).append(", ").append(i + 1).append("), ");
+        }
+        String values = valuesSb.substring(0, valuesSb.length() - 2);
+        String sql = String.format("SELECT F.* " +
+                                   "FROM FILMS F\n" +
+                                   "JOIN (VALUES %s) AS V (ID, ORDERING) ON F.ID = V.ID\n" +
+                                   "ORDER BY V.ORDERING;", values);
+        return jdbcTemplate.query(sql, (rs, rowNum) -> makeFilm(rs));
+    }
 }
