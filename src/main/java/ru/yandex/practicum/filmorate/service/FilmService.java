@@ -3,14 +3,16 @@ package ru.yandex.practicum.filmorate.service;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import ru.yandex.practicum.filmorate.exception.*;
+import ru.yandex.practicum.filmorate.exception.FilmAlreadyExistException;
+import ru.yandex.practicum.filmorate.exception.IncorrectCountException;
+import ru.yandex.practicum.filmorate.exception.InvalidIdException;
+import ru.yandex.practicum.filmorate.exception.UserNotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 import ru.yandex.practicum.filmorate.validator.FilmValidator;
 import ru.yandex.practicum.filmorate.validator.IdValidator;
 
-import java.time.LocalDate;
 import java.util.List;
 
 
@@ -111,7 +113,7 @@ public class FilmService {
 
     // получение списка общих фильмов
     public List<Film> commonFilmsList(Long userId, Long friendId) {
-        if(userStorage.findUserById(userId) == null || userStorage.findUserById(friendId) == null) {
+        if (userStorage.findUserById(userId) == null || userStorage.findUserById(friendId) == null) {
             log.info("Попытка получения списка общих фильмов пользователями с несуществующими id");
             throw new UserNotFoundException("Один из пользователей не зарегестрирован");
         } else {
@@ -139,15 +141,15 @@ public class FilmService {
     }
 
 
-    public List<Film> findDirectorFilms(Long directorId, String sort){
-        if(filmStorage.findDirectorFilms(directorId,sort)!=null){
+    public List<Film> findDirectorFilms(Long directorId, String sort) {
+        if (filmStorage.findDirectorFilms(directorId, sort) != null) {
             log.info("Список фильмов режиссера сформирован");
-            return filmStorage.findDirectorFilms(directorId,sort);
+            return filmStorage.findDirectorFilms(directorId, sort);
         } else {
             log.info("У режиссера нет фильмов :(");
             return null;
-            }
         }
+    }
 
     // поиск популярных фильмов по году
     public List<Film> findPopularFilms(Integer count, Integer year) {
@@ -205,5 +207,22 @@ public class FilmService {
             log.info("Популярных фильмов нет :( ");
             return null;
         }
+    }
+
+    // поиск фильма по режиссеру или названию
+
+    public List<Film> searchFilmByDirector(String query, List<String> values) {
+        log.info("Поиск фильмов по режиссеру");
+        return filmStorage.searchFilmByDirector(query, values);
+    }
+
+    public List<Film> searchFilmByTitle(String query, List<String> values) {
+        log.info("Поиск фильмов по названию");
+        return filmStorage.searchFilmByTitle(query, values);
+    }
+
+    public List<Film> searchFilmByTitleAndDirector(String query, List<String> values) {
+        log.info("Поиск фильмов по названию и режиссеру");
+        return filmStorage.searchFilmByTitleAndDirector(query,values);
     }
 }
