@@ -7,6 +7,7 @@ import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exception.FilmNotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.storage.feed.FeedStorage;
 import ru.yandex.practicum.filmorate.storage.genre.GenreStorage;
 import ru.yandex.practicum.filmorate.storage.mpa.MpaStorage;
 
@@ -24,11 +25,14 @@ public class FilmDbStorage implements FilmStorage {
     private final JdbcTemplate jdbcTemplate;
     private final MpaStorage mpaStorage;
     private final GenreStorage genreStorage;
+    private final FeedStorage feedStorage;
 
-    public FilmDbStorage(JdbcTemplate jdbcTemplate, MpaStorage mpaStorage, GenreStorage genreStorage) {
+    public FilmDbStorage(
+            JdbcTemplate jdbcTemplate, MpaStorage mpaStorage, GenreStorage genreStorage, FeedStorage feedStorage) {
         this.jdbcTemplate = jdbcTemplate;
         this.mpaStorage = mpaStorage;
         this.genreStorage = genreStorage;
+        this.feedStorage = feedStorage;
     }
 
     /**
@@ -159,6 +163,8 @@ public class FilmDbStorage implements FilmStorage {
         String sql = "INSERT INTO LIKES (film_id, user_id) VALUES (?, ?)";
         jdbcTemplate.update(sql, id, userId);
 
+        feedStorage.createFeedEntity(userId, id, "LIKE", "ADD");
+
         return String.format("Фильму с id %d  поставлен лайк пользователем %d", id, userId);
     }
 
@@ -169,6 +175,9 @@ public class FilmDbStorage implements FilmStorage {
         log.info("Проверка наличия лайка от пользователя c id {} у фильма с id {}", userId, id);
         if (getLikes(id).contains(userId)) {
             String sql = "delete from LIKES where film_id = ? and user_id = ?";
+
+            feedStorage.createFeedEntity(userId, id, "LIKE", "REMOVE");
+
             log.info("У фильма с id {} удален лайк пользователя с id {}", id, userId);
             return jdbcTemplate.update(sql, id, userId) > 0;
         } else {
@@ -195,7 +204,7 @@ public class FilmDbStorage implements FilmStorage {
      * возвращает список первых фильмов по количеству лайков.
      * Если значение параметра count не задано, верните первые 10.
      */
-     
+
     public List<Film> findPopularFilms(Integer count) {
         List<Film> list = new ArrayList<>();
 
@@ -263,7 +272,7 @@ public class FilmDbStorage implements FilmStorage {
         }
         return film;
     }
-    
+
     private List<Long> getIdFilms(Integer count) {
         log.info("Получение списка id пользователей, поставивших лайки");
         String sql = "select f.id, COUNT(l.user_id) " +

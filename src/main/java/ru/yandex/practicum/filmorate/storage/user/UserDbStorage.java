@@ -7,7 +7,9 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exception.UserNotFoundException;
+import ru.yandex.practicum.filmorate.model.Feed;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.storage.feed.FeedStorage;
 
 import java.sql.Date;
 import java.sql.ResultSet;
@@ -20,9 +22,11 @@ import java.util.List;
 @Slf4j
 public class UserDbStorage implements UserStorage {
     private final JdbcTemplate jdbcTemplate;
+    private final FeedStorage feedStorage;
 
-    public UserDbStorage(JdbcTemplate jdbcTemplate) {
+    public UserDbStorage(JdbcTemplate jdbcTemplate, FeedStorage feedStorage) {
         this.jdbcTemplate = jdbcTemplate;
+        this.feedStorage = feedStorage;
     }
 
     /**
@@ -131,6 +135,8 @@ public class UserDbStorage implements UserStorage {
         String sql = "INSERT INTO FRIENDS (user_id, friend_id) VALUES (?, ?)";
         jdbcTemplate.update(sql, id, friendId);
 
+        feedStorage.createFeedEntity(id, friendId, "FRIEND", "ADD");
+
         return String.format("Пользователь с id %d  добавлен в друзья к пользователю %d", friendId, id);
     }
 
@@ -142,6 +148,9 @@ public class UserDbStorage implements UserStorage {
         log.info("Проверка наличия друга с id {} у пользователя c id {}", id, friendId);
         if (getIdFriends(id).contains(friendId)) {
             String sql = "delete from FRIENDS where user_id = ? and friend_id = ?";
+
+            feedStorage.createFeedEntity(id, friendId, "FRIEND", "REMOVE");
+
             log.info("У пользователя с id {} удален из друзей пользователь с id {}", id, friendId);
             return jdbcTemplate.update(sql, id, friendId) > 0;
         } else {
@@ -185,6 +194,17 @@ public class UserDbStorage implements UserStorage {
         return list;
     }
 
+    /**
+     * Возвращает ленту событий пользователя.
+     */
+    @Override
+    public List<Feed> findFeedByIdUser(String id) {
+        String sql = "SELECT * FROM FEED WHERE USER_ID=?";
+
+        log.info("Получили ленту пользователя с id {}", id);
+        return jdbcTemplate.query(sql, (rs, rowNum) -> makeFeed(rs), id);
+    }
+
     private List<Long> getIdFriends(Long id) {
         log.info("Получение списка id друзей пользователя {}", id);
         String sql = "select friend_id from friends where user_id = ?";
@@ -206,6 +226,22 @@ public class UserDbStorage implements UserStorage {
             return null;
         }
         return user;
+    }
+
+    private Feed makeFeed(ResultSet rs) throws SQLException {
+        Feed feed = Feed.builder()
+                .eventId(rs.getLong("EVENT_ID"))
+                .userId(rs.getLong("USER_ID"))
+                .entityId(rs.getLong("ENTITY_ID"))
+                .eventType(rs.getString("EVENT_TYPE"))
+                .operation(rs.getString("OPERATION"))
+                .timestamp(rs.getLong("CREATE_TIME"))
+                .build();
+
+        if (feed == null) {
+            return null;
+        }
+        return feed;
     }
 
     private Long makeId(ResultSet rs) throws SQLException {

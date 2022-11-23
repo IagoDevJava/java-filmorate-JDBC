@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.*;
+import ru.yandex.practicum.filmorate.model.Feed;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 import ru.yandex.practicum.filmorate.validator.IdValidator;
@@ -136,5 +137,14 @@ public class UserService {
         findUserById(otherId);
         log.info("Найдены общие друзья пользователей с id {} и id {}", id, otherId);
         return userStorage.mutualFriendsList(id, otherId);
+    }
+
+    /**
+     * Возвращает ленту событий пользователя.
+     * */
+    public List<Feed> findFeedByIdUser(String id) {
+        IdValidator.isValidId(Long.valueOf(id));
+        findUserById(Long.valueOf(id));
+        return userStorage.findFeedByIdUser(id);
     }
 }

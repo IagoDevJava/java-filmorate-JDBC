@@ -13,6 +13,20 @@ MERGE INTO GENRE KEY(ID)
     (5, 'Документальный'),
     (6, 'Боевик');
 
+INSERT INTO OPERATION(NAME)
+VALUES ('Add'),
+       ('Update'),
+       ('Remove');
+
+INSERT INTO EVENT_TYPE(NAME)
+VALUES ('LIKE'),
+       ('REVIEW'),
+       ('FRIEND');
+
+DELETE FROM EVENT_TYPE;
+DELETE FROM OPERATION;
+DELETE FROM FEED;
+
 DELETE FROM FILM_GENRE;
 DELETE FROM FILM_MPA;
 
