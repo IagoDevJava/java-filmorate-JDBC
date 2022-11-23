@@ -45,4 +45,5 @@ public interface FilmStorage {
     // поиск популярных фильмов по году и жанру
     List<Film> findPopularFilms(Integer count, Long genreId, Integer year);
 
+    List<Film> findFilmsByIdsOrdered(List<Long> ids);
 }
