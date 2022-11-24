@@ -4,7 +4,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.Feed;
+import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.service.RecommendationService;
 import ru.yandex.practicum.filmorate.service.UserService;
 
 import javax.validation.Valid;
@@ -14,11 +16,17 @@ import java.util.List;
 @RequestMapping("/users")
 @Slf4j
 public class UserController {
-    UserService userService;
+    private final UserService userService;
+
+    private final RecommendationService recommendationService;
 
     @Autowired
-    public UserController(UserService userService) {
+    public UserController(
+            UserService userService,
+            RecommendationService recommendationService
+    ) {
         this.userService = userService;
+        this.recommendationService = recommendationService;
     }
 
     /**
@@ -120,4 +128,12 @@ public class UserController {
         return userService.findFeedByIdUser(id);
     }
 
+    /**
+     * Рекомендации для юзера
+     */
+    @GetMapping("/{id}/recommendations")
+    public List<Film> getRecommendations(@PathVariable Long id){
+        log.info("GET /{id}/recommendations");
+        return recommendationService.getRecommendation(id);
+    }
 }

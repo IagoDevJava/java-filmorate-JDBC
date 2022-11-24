@@ -36,6 +36,12 @@ public class ErrorHandler {
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ResponseEntity<Map<String, String>> handleDirectorNotFoundException(final DirectorNotFoundException e){
+        return new ResponseEntity<>(Map.of("error:", e.getMessage()), HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.NOT_FOUND)
     public ResponseEntity<Map<String, String>> handleInvalidIdException(final InvalidIdException e) {
         return new ResponseEntity<>(Map.of("error:", e.getMessage()),
                 HttpStatus.NOT_FOUND);
