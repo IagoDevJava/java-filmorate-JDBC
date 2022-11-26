@@ -377,7 +377,6 @@ public class FilmDbStorage implements FilmStorage {
     }
 
     private Long makeFilmId(ResultSet rs) throws SQLException {
-
         return rs.getLong("id");
     }
 
