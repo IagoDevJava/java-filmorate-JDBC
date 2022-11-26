@@ -9,8 +9,6 @@ import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Review;
 import ru.yandex.practicum.filmorate.storage.feed.FeedStorage;
-import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
-import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -24,21 +22,19 @@ import java.util.List;
 public class ReviewDbStorage implements ReviewStorage {
 
     private final JdbcTemplate jdbcTemplate;
-    private final UserStorage userStorage;
-    private final FilmStorage filmStorage;
     private final FeedStorage feedStorage;
 
 
     public ReviewDbStorage(
-            JdbcTemplate jdbcTemplate, UserStorage userStorage, FilmStorage filmStorage, FeedStorage feedStorage) {
+            JdbcTemplate jdbcTemplate, FeedStorage feedStorage) {
         this.jdbcTemplate = jdbcTemplate;
-        this.userStorage = userStorage;
-        this.filmStorage = filmStorage;
         this.feedStorage = feedStorage;
 
     }
 
-    // создать отзыв
+    /**
+     * создать отзыв
+     */
     @Override
     public Review create(Review review) {
         Long idReview = 1L;
@@ -63,7 +59,9 @@ public class ReviewDbStorage implements ReviewStorage {
         return findReviewById(review.getReviewId());
     }
 
-    // обновить отзыв
+    /**
+     * обновить отзыв
+     */
     @Override
     public Review update(Review review) {
         String sql = "UPDATE REVIEWS SET content = ?, isPositive = ?, creationDate = ? WHERE id = ?";
@@ -84,7 +82,9 @@ public class ReviewDbStorage implements ReviewStorage {
         return reviewUpdate;
     }
 
-    // удалить отзыв
+    /**
+     * удалить отзыв
+     */
     @Override
     public void delete(Long id) {
         Review review = findReviewById(id);
@@ -97,7 +97,9 @@ public class ReviewDbStorage implements ReviewStorage {
         log.info("Отзыв с id {} удален", id);
     }
 
-    // получить отзыв по id отзыва
+    /**
+     * получить отзыв по id отзыва
+     */
     @Override
     public Review findReviewById(Long id) {
         log.info("Получение отзыва с id %d", id);
@@ -114,25 +116,9 @@ public class ReviewDbStorage implements ReviewStorage {
         }
     }
 
-    // приват - билдер отзыва
-    private Review makeReview(ResultSet rs) throws SQLException {
-        Review review = Review.builder()
-                .reviewId(rs.getLong("id"))
-                .content(rs.getString("content"))
-                .isPositive(rs.getBoolean("isPositive"))
-                .userId(rs.getLong("user_id"))
-                .filmId(rs.getLong("film_id"))
-                .useful(rs.getLong("useful"))
-                .creationDate(rs.getTimestamp("creationdate").toLocalDateTime())
-                .build();
-
-        if (review == null) {
-            return null;
-        }
-        return review;
-    }
-
-    // получить отзывы
+    /**
+     * получить отзывы
+     */
     @Override
     public List<Review> findAll(Integer count) {
         log.info("Получение списка отзывов в количестве {}", count);
@@ -147,7 +133,9 @@ public class ReviewDbStorage implements ReviewStorage {
         return jdbcTemplate.query(sql, (rs, rowNum) -> makeReview(rs));
     }
 
-    // получить список всех отзывов для проверки на дубли при создании отзыва
+    /**
+     * получить список всех отзывов для проверки на дубли при создании отзыва
+     */
     @Override
     public List<Review> findAllForCheck() {
         log.info("Получение списка отзывов");
@@ -159,7 +147,9 @@ public class ReviewDbStorage implements ReviewStorage {
         return jdbcTemplate.query(sql, (rs, rowNum) -> makeReview(rs));
     }
 
-    // получить список отзывов по id фильма
+    /**
+     * получить список отзывов по id фильма
+     */
     @Override
     public List<Review> findAllByFilmId(Long filmId, Integer count) {
         log.info("Получение списка отзывов для фильма с id {} в количестве {}", filmId, count);
@@ -173,36 +163,29 @@ public class ReviewDbStorage implements ReviewStorage {
         return jdbcTemplate.query(sql, (rs, rowNum) -> makeReview(rs), filmId);
     }
 
-    // поставить лайк/дизлайк отзыву
+    /**
+     * поставить лайк/дизлайк отзыву
+     */
     @Override
     public String addLike(Long id, Long userId, int useful) {
         String sql = "INSERT INTO REVIEW_LIKES (review_id, user_id, useful, creationDate) " +
                 "VALUES (?, ?, ?, ?)";
         jdbcTemplate.update(sql, id, userId, useful, Timestamp.valueOf(LocalDateTime.now()));
-
-//        if (id == -1) {
-//            feedStorage.createFeedEntity(userId, id, "DISLIKE", "ADD");
-//        } else {
-//            feedStorage.createFeedEntity(userId, id, "LIKE", "ADD");
-//        }
-
         return String.format("Фильму с id %d  поставлен лайк пользователем %d", id, userId);
     }
 
-    // удалить лайк/дизлайк
+    /**
+     * удалить лайк/дизлайк
+     */
     @Override
     public void deleteLike(Long id, Long userId) {
         String sql = "delete from REVIEW_LIKES where review_id = ? and user_id = ?";
         jdbcTemplate.update(sql, id, userId);
-
-//        if (id == -1) {
-//            feedStorage.createFeedEntity(userId, id, "DISLIKE", "REMOVE");
-//        } else {
-//            feedStorage.createFeedEntity(userId, id, "LIKE", "REMOVE");
-//        }
     }
 
-    // получить useful отзыва по id (для проверки наличия и статуса лайка)
+    /**
+     * получить useful отзыва по id (для проверки наличия и статуса лайка)
+     */
     public Long getUsefulFromUser(Long id, Long userId) {
         log.info("Получение лайков отзыва {} от пользователя {}", id, userId);
         String sql = "select useful from REVIEW_LIKES where review_id = ? and user_id = ?";
@@ -214,10 +197,22 @@ public class ReviewDbStorage implements ReviewStorage {
         }
     }
 
+    // приват - билдер отзыва
+    private Review makeReview(ResultSet rs) throws SQLException {
+        return Review.builder()
+                .reviewId(rs.getLong("id"))
+                .content(rs.getString("content"))
+                .isPositive(rs.getBoolean("isPositive"))
+                .userId(rs.getLong("user_id"))
+                .filmId(rs.getLong("film_id"))
+                .useful(rs.getLong("useful"))
+                .creationDate(rs.getTimestamp("creationdate").toLocalDateTime())
+                .build();
+    }
+
     // приват - билдер useful (нужен для getUsefulFromUser)
     private Long makeUseful(ResultSet rs) throws SQLException {
-        Long l = rs.getLong("useful");
-        return l;
+        return rs.getLong("useful");
     }
 
 }

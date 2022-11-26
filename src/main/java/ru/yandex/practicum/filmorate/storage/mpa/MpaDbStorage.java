@@ -16,14 +16,16 @@ import java.util.List;
 @Component
 @Primary
 @Slf4j
-public class MpaDbStorage implements MpaStorage{
+public class MpaDbStorage implements MpaStorage {
     private final JdbcTemplate jdbcTemplate;
 
-    public MpaDbStorage(JdbcTemplate jdbcTemplate){
-        this.jdbcTemplate=jdbcTemplate;
+    public MpaDbStorage(JdbcTemplate jdbcTemplate) {
+        this.jdbcTemplate = jdbcTemplate;
     }
 
-    // получение списка всех mpa
+    /**
+     * получение списка всех mpa
+     */
     @Override
     public List<Mpa> findAll() {
         log.info("Получение списка mpa");
@@ -31,19 +33,23 @@ public class MpaDbStorage implements MpaStorage{
         return jdbcTemplate.query(sql, (rs, rowNum) -> makeMpa(rs));
     }
 
-    // поиск mpa по id
+    /**
+     * поиск mpa по id
+     */
     @Override
     public Mpa findMpaById(Long id) {
         String sql = "select * from mpa where id = ?";
 
-        try{
+        try {
             return jdbcTemplate.queryForObject(sql, (rs, rowNum) -> makeMpa(rs), id);
         } catch (EmptyResultDataAccessException e) {
             throw new NotFoundException(String.format("Mpa с id %d не найден", id));
         }
     }
 
-    // получение mpa по id фильма
+    /**
+     * получение mpa по id фильма
+     */
     @Override
     public Mpa getMpa(Long id) {
         log.info("Получение mpa фильма с id {}", id);
@@ -54,13 +60,18 @@ public class MpaDbStorage implements MpaStorage{
         }
     }
 
-    // добавление mpa
+    /**
+     * добавление mpa
+     */
     public void addMpa(Film film) {
         String sql = "INSERT INTO FILM_MPA (film_id, mpa_id) VALUES (?, ?)";
         jdbcTemplate.update(sql, film.getId(), film.getMpa().getId());
         log.info("Фильму с id {} присвоен mpa с id {}", film.getId(), film.getMpa().getId());
     }
 
+    /**
+     * обновление mpa
+     */
     public void updateMpa(Film film) {
         String qsql = "delete from FILM_MPA where film_id = ?";
         log.info("У фильма с id {} удален существующиq mpa", film.getId());
@@ -75,7 +86,7 @@ public class MpaDbStorage implements MpaStorage{
         log.info("Получение id mpa по id фильма {}", id);
         String sql = "select mpa_id from FILM_MPA where film_id = ?";
 
-        try{
+        try {
             return jdbcTemplate.queryForObject(sql, (rs, rowNum) -> makeMpaId(rs), id);
         } catch (EmptyResultDataAccessException e) {
             return null;
@@ -83,23 +94,15 @@ public class MpaDbStorage implements MpaStorage{
     }
 
     private Long makeMpaId(ResultSet rs) throws SQLException {
-        Long l = rs.getLong("mpa_id");
 
-        if (l == null) {
-            return null;
-        }
-        return l;
+        return rs.getLong("mpa_id");
     }
 
     private Mpa makeMpa(ResultSet rs) throws SQLException {
-        Mpa mpa = Mpa.builder()
+
+        return Mpa.builder()
                 .id(rs.getLong("id"))
                 .name(rs.getString("name"))
                 .build();
-
-        if (mpa == null) {
-            return null;
-        }
-        return mpa;
     }
 }

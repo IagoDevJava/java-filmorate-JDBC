@@ -7,8 +7,6 @@ import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.model.Feed;
 
-import java.time.LocalDateTime;
-
 @Component
 @Primary
 @Slf4j

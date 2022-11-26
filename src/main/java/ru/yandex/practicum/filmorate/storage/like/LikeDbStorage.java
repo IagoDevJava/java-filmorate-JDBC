@@ -17,6 +17,9 @@ public class LikeDbStorage implements LikeStorage {
         this.jdbcTemplate = jdbcTemplate;
     }
 
+    /**
+     * Получение списка лпйков
+     */
     @Override
     public List<Like> findAll() {
         String sql = "SELECT * FROM LIKES ORDER BY USER_ID";

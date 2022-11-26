@@ -223,6 +223,6 @@ public class FilmService {
 
     public List<Film> searchFilmByTitleAndDirector(String query, List<String> values) {
         log.info("Поиск фильмов по названию и режиссеру");
-        return filmStorage.searchFilmByTitleAndDirector(query,values);
+        return filmStorage.searchFilmByTitleAndDirector(query, values);
     }
 }

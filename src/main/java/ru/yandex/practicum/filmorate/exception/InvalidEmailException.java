@@ -5,6 +5,3 @@ public class InvalidEmailException extends Exception {
         super(message);
     }
 }
-
-// Ростислав, привет!
-// Сделала все правки, как ты рекомендовал :))

@@ -28,6 +28,9 @@ public class DirectorDbStorage implements DirectorStorage {
         this.jdbcTemplate = jdbcTemplate;
     }
 
+    /**
+     * Получить список режиссеров
+     */
     @Override
     public List<Director> findAll() {
         try {
@@ -38,6 +41,9 @@ public class DirectorDbStorage implements DirectorStorage {
         }
     }
 
+    /**
+     * Получить режиссера по id
+     */
     @Override
     public Director findDirectorById(Long id) {
         String sql = "SELECT * FROM DIRECTORS WHERE id = ?";
@@ -48,6 +54,9 @@ public class DirectorDbStorage implements DirectorStorage {
         }
     }
 
+    /**
+     * Создать режиссера
+     */
     @Override
     public Director create(Director director) {
         if (director.getName().isEmpty() || director.getName().startsWith(" ")) {
@@ -69,6 +78,9 @@ public class DirectorDbStorage implements DirectorStorage {
         return director;
     }
 
+    /**
+     * Обновить режиссера
+     */
     @Override
     public Director update(Director director) {
         String sql = "UPDATE DIRECTORS SET name = ?";
@@ -77,6 +89,9 @@ public class DirectorDbStorage implements DirectorStorage {
         return findDirectorById(director.getId());
     }
 
+    /**
+     * Удалить режиссера по id
+     */
     @Override
     public void deleteDirectorById(Long id) {
         if (findDirectorById(id) != null) {
@@ -89,6 +104,9 @@ public class DirectorDbStorage implements DirectorStorage {
         }
     }
 
+    /**
+     * Добавить режиссера к фильму
+     */
     @Override
     public void addDirectorsToFilm(Film film) {
         if (film.getDirectors() != null) {
@@ -100,6 +118,9 @@ public class DirectorDbStorage implements DirectorStorage {
         }
     }
 
+    /**
+     * Получить режиссеров
+     */
     @Override
     public List<Director> getDirectors(Long id) {
         log.info("Получение List<Director> фильма с id = {}", id);
@@ -112,6 +133,9 @@ public class DirectorDbStorage implements DirectorStorage {
         return list;
     }
 
+    /**
+     * Очистить список режиссеров
+     */
     @Override
     public void clearDirectors(Film film) {
         String sql = "DELETE FROM FILM_DIRECTOR where film_id = ?";

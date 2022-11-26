@@ -14,6 +14,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 
 @Component
 @Primary
@@ -21,11 +22,13 @@ import java.util.List;
 public class GenreDbStorage implements GenreStorage {
     private final JdbcTemplate jdbcTemplate;
 
-    public GenreDbStorage(JdbcTemplate jdbcTemplate){
-        this.jdbcTemplate=jdbcTemplate;
+    public GenreDbStorage(JdbcTemplate jdbcTemplate) {
+        this.jdbcTemplate = jdbcTemplate;
     }
 
-    // получение списка всех жанров
+    /**
+     * получение списка всех жанров
+     */
     @Override
     public List<Genre> findAll() {
         log.info("Получение списка жанров");
@@ -33,44 +36,52 @@ public class GenreDbStorage implements GenreStorage {
         return jdbcTemplate.query(sql, (rs, rowNum) -> makeGenre(rs));
     }
 
-    // поиск жанра по id
+    /**
+     * поиск жанра по id
+     */
     @Override
     public Genre findGenreById(Long id) {
         String sql = "select * from GENRE where id = ?";
 
-        try{
+        try {
             return jdbcTemplate.queryForObject(sql, (rs, rowNum) -> makeGenre(rs), id);
         } catch (EmptyResultDataAccessException e) {
             throw new NotFoundException(String.format("Жанр с id %d не найден", id));
         }
     }
 
-    // получение жанров по id фильма
+    /**
+     * получение жанров по id фильма
+     */
     @Override
     public List<Genre> getGenre(Long id) {
         log.info("Получение List<Genre> фильма с id {}", id);
         List<Genre> list = new ArrayList<>();
 
         if (getGenreId(id) != null) {
-            for (Long l : getGenreId(id)) {
+            for (Long l : Objects.requireNonNull(getGenreId(id))) {
                 list.add(findGenreById(l));
             }
         }
         return list;
     }
 
-    // получение id жанров по id фильма
+    /**
+     * получение id жанров по id фильма
+     */
     private List<Long> getGenreId(Long id) {
         log.info("Получение списка id жанров для фильма с id {}", id);
         String sql = "select genre_id from FILM_GENRE where film_id = ?";
-        try{
+        try {
             return jdbcTemplate.query(sql, (rs, rowNum) -> makeGenreId(rs), id);
         } catch (EmptyResultDataAccessException e) {
             return null;
         }
     }
 
-    // добавление жанров
+    /**
+     * добавление жанров
+     */
     @Override
     public void addGenre(Film film) {
         if (!film.getGenres().isEmpty()) {
@@ -82,7 +93,9 @@ public class GenreDbStorage implements GenreStorage {
         }
     }
 
-    // обновление жанров
+    /**
+     * обновление жанров
+     */
     @Override
     public void updateGenre(Film film) {
         String qsql = "delete from FILM_GENRE where film_id = ?";
@@ -91,11 +104,11 @@ public class GenreDbStorage implements GenreStorage {
         log.info("Обновление списка жанров фильма с id {}", film.getId());
 
         if (film.getGenres() != null) {
-            HashMap <Long, Genre> h = new HashMap<>();
+            HashMap<Long, Genre> h = new HashMap<>();
             for (Genre g : film.getGenres()) {
                 h.put(g.getId(), g);
             }
-            for(Genre g : h.values()){
+            for (Genre g : h.values()) {
                 String sql = "INSERT INTO FILM_GENRE (film_id, genre_id) VALUES (?, ?)";
                 jdbcTemplate.update(sql, film.getId(), g.getId());
                 log.info("Фильму с id {} присвоен жанр {}", film.getId(), g);
@@ -104,23 +117,13 @@ public class GenreDbStorage implements GenreStorage {
     }
 
     private Long makeGenreId(ResultSet rs) throws SQLException {
-        Long l = rs.getLong("genre_id");
-
-        if (l == null) {
-            return null;
-        }
-        return l;
+        return rs.getLong("genre_id");
     }
 
     private Genre makeGenre(ResultSet rs) throws SQLException {
-        Genre genre = Genre.builder()
+        return Genre.builder()
                 .id(rs.getLong("id"))
                 .name(rs.getString("name"))
                 .build();
-
-        if (genre == null) {
-            return null;
-        }
-        return genre;
     }
 }

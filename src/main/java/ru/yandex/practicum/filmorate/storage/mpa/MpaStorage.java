@@ -7,8 +7,12 @@ import java.util.List;
 
 public interface MpaStorage {
     public List<Mpa> findAll();
+
     public Mpa findMpaById(Long id);
+
     public Mpa getMpa(Long id);
+
     public void addMpa(Film film);
+
     public void updateMpa(Film film);
 }

@@ -3,7 +3,9 @@ package ru.yandex.practicum.filmorate.service;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import ru.yandex.practicum.filmorate.exception.*;
+import ru.yandex.practicum.filmorate.exception.AlreadyExistException;
+import ru.yandex.practicum.filmorate.exception.FilmAlreadyExistException;
+import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Review;
 import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.review.ReviewStorage;
@@ -33,7 +35,7 @@ public class ReviewService {
         filmStorage.findFilmById(review.getFilmId());
         userStorage.findUserById(review.getUserId());
 
-        if(reviewStorage.findAllForCheck().contains(review)) {
+        if (reviewStorage.findAllForCheck().contains(review)) {
             log.info("Попытка добавить уже существующий отзыв");
             throw new FilmAlreadyExistException("Отзыв уже существует");
         }
@@ -82,13 +84,13 @@ public class ReviewService {
         reviewStorage.findReviewById(id);
         userStorage.findUserById(userId);
 
-        if(reviewStorage.getUsefulFromUser(id, userId) == null) {
+        if (reviewStorage.getUsefulFromUser(id, userId) == null) {
             reviewStorage.addLike(id, userId, useful);
             log.info("Отзыву с id {} поставлен лайк/дизлайк пользователем {}", id, userId);
             return String.format("Отзыву с id %d поставлен лайк/дизлайк пользователем с id %d", id, userId);
         }
 
-        if(reviewStorage.getUsefulFromUser(id, userId).equals(useful)) {
+        if (reviewStorage.getUsefulFromUser(id, userId).equals(useful)) {
             log.info("Лайк/дизлайк уже существует");
             throw new AlreadyExistException("Лайк/дизлайк уже существует");
         }
@@ -108,12 +110,12 @@ public class ReviewService {
         reviewStorage.findReviewById(id);
         userStorage.findUserById(userId);
 
-        if(reviewStorage.getUsefulFromUser(id, userId) == null) {
+        if (reviewStorage.getUsefulFromUser(id, userId) == null) {
             log.info("Лайк/дизлайк не существует");
             throw new NotFoundException("Лайк/дизлайк не существует");
         }
 
-        if(reviewStorage.getUsefulFromUser(id, userId).equals(1) && useful == -1) {
+        if (reviewStorage.getUsefulFromUser(id, userId).equals(1) && useful == -1) {
             log.info("У отзыва с id {} нет дизлайка от пользователя {}", id, userId);
             return String.format("У отзыва с id %d нет дизлайка от пользователя с id %d", id, userId);
         }
