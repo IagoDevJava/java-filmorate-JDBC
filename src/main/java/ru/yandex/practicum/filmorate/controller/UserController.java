@@ -3,6 +3,7 @@ package ru.yandex.practicum.filmorate.controller;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import ru.yandex.practicum.filmorate.model.Feed;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.RecommendationService;
@@ -116,6 +117,15 @@ public class UserController {
     public List<User> mutualFriendsList(@PathVariable("id") Long id, @PathVariable("otherId") Long otherId) {
         log.info("Получен запрос GET/users/{id}/friends/common/{otherId} — список общих друзей");
         return userService.mutualFriendsList(id, otherId);
+    }
+
+    /**
+     * Возвращает ленту событий пользователя.
+     * */
+    @GetMapping("/{id}/feed")
+    public List<Feed> findFeedByIdUser(@PathVariable String id) {
+        log.info("Подбираем ленту пользователя с id {}", id);
+        return userService.findFeedByIdUser(id);
     }
 
     /**

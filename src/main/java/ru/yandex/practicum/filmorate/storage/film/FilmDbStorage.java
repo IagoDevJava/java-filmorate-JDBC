@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exception.DirectorNotFoundException;
 import ru.yandex.practicum.filmorate.exception.FilmNotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.storage.feed.FeedStorage;
 import ru.yandex.practicum.filmorate.storage.director.DirectorStorage;
 import ru.yandex.practicum.filmorate.storage.genre.GenreStorage;
 import ru.yandex.practicum.filmorate.storage.mpa.MpaStorage;
@@ -27,18 +28,16 @@ public class FilmDbStorage implements FilmStorage {
     private final JdbcTemplate jdbcTemplate;
     private final MpaStorage mpaStorage;
     private final GenreStorage genreStorage;
-
+    private final FeedStorage feedStorage;
     private final DirectorStorage directorStorage;
 
     public FilmDbStorage(
-            JdbcTemplate jdbcTemplate,
-            MpaStorage mpaStorage,
-            GenreStorage genreStorage,
-            DirectorStorage directorStorage
-    ) {
+            JdbcTemplate jdbcTemplate, MpaStorage mpaStorage, GenreStorage genreStorage, FeedStorage feedStorage,
+            DirectorStorage directorStorage) {
         this.jdbcTemplate = jdbcTemplate;
         this.mpaStorage = mpaStorage;
         this.genreStorage = genreStorage;
+        this.feedStorage = feedStorage;
         this.directorStorage = directorStorage;
     }
 
@@ -182,6 +181,8 @@ public class FilmDbStorage implements FilmStorage {
         String sql = "INSERT INTO LIKES (film_id, user_id) VALUES (?, ?)";
         jdbcTemplate.update(sql, id, userId);
 
+        feedStorage.createFeedEntity(userId, id, "LIKE", "ADD");
+
         return String.format("Фильму с id %d  поставлен лайк пользователем %d", id, userId);
     }
 
@@ -192,6 +193,9 @@ public class FilmDbStorage implements FilmStorage {
         log.info("Проверка наличия лайка от пользователя c id {} у фильма с id {}", userId, id);
         if (getLikes(id).contains(userId)) {
             String sql = "delete from LIKES where film_id = ? and user_id = ?";
+
+            feedStorage.createFeedEntity(userId, id, "LIKE", "REMOVE");
+
             log.info("У фильма с id {} удален лайк пользователя с id {}", id, userId);
             return jdbcTemplate.update(sql, id, userId) > 0;
         } else {

@@ -8,6 +8,7 @@ import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Review;
+import ru.yandex.practicum.filmorate.storage.feed.FeedStorage;
 import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 
@@ -25,29 +26,38 @@ public class ReviewDbStorage implements ReviewStorage {
     private final JdbcTemplate jdbcTemplate;
     private final UserStorage userStorage;
     private final FilmStorage filmStorage;
+    private final FeedStorage feedStorage;
 
-    public ReviewDbStorage(JdbcTemplate jdbcTemplate, UserStorage userStorage, FilmStorage filmStorage) {
+
+    public ReviewDbStorage(
+            JdbcTemplate jdbcTemplate, UserStorage userStorage, FilmStorage filmStorage, FeedStorage feedStorage) {
         this.jdbcTemplate = jdbcTemplate;
         this.userStorage = userStorage;
         this.filmStorage = filmStorage;
+        this.feedStorage = feedStorage;
+
     }
 
     // создать отзыв
     @Override
     public Review create(Review review) {
-        Long idn = 1L;
+        Long idReview = 1L;
         SqlRowSet fr = jdbcTemplate.queryForRowSet("SELECT id FROM REVIEWS ORDER BY id DESC LIMIT 1");
         if (fr.next()) {
-            idn = fr.getLong("id");
-            log.info("Последний установленный id: {}", idn);
-            idn++;
+            idReview = fr.getLong("id");
+            log.info("Последний установленный id: {}", idReview);
+            idReview++;
         }
-        review.setReviewId(idn);
-        log.info("Установлен id отзыва: {}", idn);
+        review.setReviewId(idReview);
+        log.info("Установлен id отзыва: {}", idReview);
 
-        String sql = "INSERT INTO REVIEWS (id, content, isPositive, user_id, film_id, creationDate) VALUES (?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO REVIEWS (id, content, isPositive, user_id, film_id, creationDate) " +
+                "VALUES (?, ?, ?, ?, ?, ?)";
         jdbcTemplate.update(sql, review.getReviewId(), review.getContent(), review.getIsPositive(), review.getUserId(),
                 review.getFilmId(), Timestamp.valueOf(LocalDateTime.now()));
+
+        feedStorage.createFeedEntity(review.getUserId(), review.getReviewId(), "REVIEW", "ADD");
+
         log.info("Добавлен новый отзыв: {}", review);
 
         return findReviewById(review.getReviewId());
@@ -63,14 +73,23 @@ public class ReviewDbStorage implements ReviewStorage {
                 , review.getIsPositive()
                 , Timestamp.valueOf(LocalDateTime.now())
                 , review.getReviewId());
+
+        Review reviewUpdate = findReviewById(review.getReviewId());
+
+        feedStorage.createFeedEntity(reviewUpdate.getUserId(), reviewUpdate.getReviewId(),
+                "REVIEW", "UPDATE");
+
         log.info("Отзыв обновлен: {}", review);
 
-        return findReviewById(review.getReviewId());
+        return reviewUpdate;
     }
 
     // удалить отзыв
     @Override
     public void delete(Long id) {
+        Review review = findReviewById(id);
+        feedStorage.createFeedEntity(review.getUserId(), review.getReviewId(), "REVIEW", "REMOVE");
+
         String sqlL = "delete from REVIEW_LIKES where review_id = ?";
         String sqlR = "delete from REVIEWS where id = ?";
         jdbcTemplate.update(sqlL, id);
@@ -88,7 +107,7 @@ public class ReviewDbStorage implements ReviewStorage {
                 "ON t.id = l.review_id " +
                 "where t.id = ?" +
                 "GROUP BY t.id ";
-        try{
+        try {
             return jdbcTemplate.queryForObject(sql, (rs, rowNum) -> makeReview(rs), id);
         } catch (EmptyResultDataAccessException e) {
             throw new NotFoundException(String.format("Отзыв с id %d не найден", id));
@@ -161,6 +180,12 @@ public class ReviewDbStorage implements ReviewStorage {
                 "VALUES (?, ?, ?, ?)";
         jdbcTemplate.update(sql, id, userId, useful, Timestamp.valueOf(LocalDateTime.now()));
 
+//        if (id == -1) {
+//            feedStorage.createFeedEntity(userId, id, "DISLIKE", "ADD");
+//        } else {
+//            feedStorage.createFeedEntity(userId, id, "LIKE", "ADD");
+//        }
+
         return String.format("Фильму с id %d  поставлен лайк пользователем %d", id, userId);
     }
 
@@ -169,6 +194,12 @@ public class ReviewDbStorage implements ReviewStorage {
     public void deleteLike(Long id, Long userId) {
         String sql = "delete from REVIEW_LIKES where review_id = ? and user_id = ?";
         jdbcTemplate.update(sql, id, userId);
+
+//        if (id == -1) {
+//            feedStorage.createFeedEntity(userId, id, "DISLIKE", "REMOVE");
+//        } else {
+//            feedStorage.createFeedEntity(userId, id, "LIKE", "REMOVE");
+//        }
     }
 
     // получить useful отзыва по id (для проверки наличия и статуса лайка)
@@ -176,7 +207,7 @@ public class ReviewDbStorage implements ReviewStorage {
         log.info("Получение лайков отзыва {} от пользователя {}", id, userId);
         String sql = "select useful from REVIEW_LIKES where review_id = ? and user_id = ?";
 
-        try{
+        try {
             return jdbcTemplate.queryForObject(sql, (rs, rowNum) -> makeUseful(rs), id, userId);
         } catch (EmptyResultDataAccessException e) {
             return null;
