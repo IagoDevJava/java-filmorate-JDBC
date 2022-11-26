@@ -47,7 +47,7 @@ public class UserDaoImpl implements UserDao {
     public User createUser(User user) {
         UserValidator.isValidNameUsers(user);
         try (Connection con = DriverManager.getConnection(
-                "jdbc:h2:file:./db/filmorate", "sa", "password");) {
+                "jdbc:h2:file:./db/filmorate", "sa", "password")) {
             String sql =
                     "INSERT INTO USERS (NAME, LOGIN, EMAIL, BIRTHDAY) VALUES ((?), (?), (?), (?))";
             final PreparedStatement preparedStatement = con.prepareStatement(sql);
