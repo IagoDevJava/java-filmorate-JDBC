@@ -4,14 +4,14 @@ MERGE INTO MPA KEY (ID)
            (3, 'PG-13'),
            (4, 'R'),
            (5, 'NC-17');
-
-MERGE INTO GENRE KEY (ID)
+           
+ MERGE INTO GENRE KEY (ID)
     VALUES (1, 'Комедия'),
-           (2, 'Драма'),
-           (3, 'Мультфильм'),
-           (4, 'Триллер'),
-           (5, 'Документальный'),
-           (6, 'Боевик');
+    (2, 'Драма'),
+    (3, 'Мультфильм'),
+    (4, 'Триллер'),
+    (5, 'Документальный'),
+    (6, 'Боевик');
 
 INSERT INTO OPERATION(NAME)
 VALUES ('Add'),
@@ -22,7 +22,7 @@ INSERT INTO EVENT_TYPE(NAME)
 VALUES ('LIKE'),
        ('REVIEW'),
        ('FRIEND');
-
+           
 DELETE
 FROM FILM_GENRE;
 DELETE
@@ -47,9 +47,6 @@ DELETE
 FROM FRIENDS;
 DELETE
 FROM USERS;
-DELETE
-FROM EVENT_TYPE;
-DELETE
-FROM OPERATION;
-DELETE
-FROM FEED;
+DELETE FROM EVENT_TYPE;
+DELETE FROM OPERATION;
+DELETE FROM FEED;

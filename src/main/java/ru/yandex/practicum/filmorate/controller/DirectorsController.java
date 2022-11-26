@@ -17,31 +17,31 @@ public class DirectorsController {
     private final DirectorService directorService;
 
     @GetMapping
-    public List<Director> findAll() {
+    public List<Director> findAll(){
         log.info("Получен запрос GET/directors - список всех режиссеров");
         return directorService.findAll();
     }
 
     @GetMapping("/{id}")
-    public Director findById(@PathVariable Long id) {
+    public Director findById(@PathVariable Long id){
         log.info("Получен запрос GET/directors/{id} - получение режиссера по id");
         return directorService.findById(id);
     }
 
     @PostMapping
-    public Director create(@RequestBody Director director) {
+    public Director create(@RequestBody Director director){
         log.info("Получен запрос POST/directors - создание режиссера");
         return directorService.create(director);
     }
 
     @PutMapping
-    public Director update(@RequestBody Director director) {
+    public Director update(@RequestBody Director director){
         log.info("Получен запрос PUT/directors - изминение режиссера");
         return directorService.update(director);
     }
 
     @DeleteMapping("/{id}")
-    public void delete(@PathVariable Long id) {
+    public void delete(@PathVariable Long id){
         log.info("Получен запрос DELETE/directors/{id} - удаление режиссера");
         directorService.delete(id);
     }

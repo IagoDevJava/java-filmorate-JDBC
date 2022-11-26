@@ -121,7 +121,7 @@ public class UserController {
 
     /**
      * Возвращает ленту событий пользователя.
-     */
+     * */
     @GetMapping("/{id}/feed")
     public List<Feed> findFeedByIdUser(@PathVariable String id) {
         log.info("Подбираем ленту пользователя с id {}", id);
@@ -132,7 +132,7 @@ public class UserController {
      * Рекомендации для юзера
      */
     @GetMapping("/{id}/recommendations")
-    public List<Film> getRecommendations(@PathVariable Long id) {
+    public List<Film> getRecommendations(@PathVariable Long id){
         log.info("GET /{id}/recommendations");
         return recommendationService.getRecommendation(id);
     }

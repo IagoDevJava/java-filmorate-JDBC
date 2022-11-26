@@ -4,14 +4,14 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import ru.yandex.practicum.filmorate.exception.InvalidIdException;
-import ru.yandex.practicum.filmorate.exception.UserAlreadyExistException;
+import ru.yandex.practicum.filmorate.exception.*;
 import ru.yandex.practicum.filmorate.model.Feed;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 import ru.yandex.practicum.filmorate.validator.IdValidator;
 import ru.yandex.practicum.filmorate.validator.UserValidator;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -28,12 +28,12 @@ public class UserService {
     public User create(User user) {
         UserValidator.isValidUser(user);
 
-        if (userStorage.findAll().contains(user)) {
+        if(userStorage.findAll().contains(user)) {
             log.info("Попытка добавить уже существующего пользователя");
             throw new UserAlreadyExistException("Пользователь уже существует");
         }
 
-        if (user.getName() == null || user.getName().isEmpty() || user.getName().isBlank()) {
+        if(user.getName() == null || user.getName().isEmpty() || user.getName().isBlank()) {
             user.setName(user.getLogin());
             log.info("В качестве name установлен login пользователя: {}", user.getLogin());
         }
@@ -47,7 +47,7 @@ public class UserService {
         IdValidator.isValidId(user.getId());
         findUserById(user.getId());
 
-        if (user.getName() == null || user.getName().isEmpty() || user.getName().isBlank()) {
+        if(user.getName() == null || user.getName().isEmpty() || user.getName().isBlank()) {
             user.setName(user.getLogin());
             log.info("В качестве name установлен login пользователя: {}", user.getLogin());
         }
@@ -97,7 +97,7 @@ public class UserService {
             return String.format("Пользователь с id %d  добавлен в друзья к пользователю %d", friendId, id);
         } else {
             log.info("Попытка добавить пользователя с id {} в друзья к пользователю с id  {}", id, friendId);
-            throw new InvalidIdException("Вы не можете добавить себя к себе в друзья");
+            throw new InvalidIdException ("Вы не можете добавить себя к себе в друзья");
         }
     }
 
@@ -141,7 +141,7 @@ public class UserService {
 
     /**
      * Возвращает ленту событий пользователя.
-     */
+     * */
     public List<Feed> findFeedByIdUser(String id) {
         IdValidator.isValidId(Long.valueOf(id));
         findUserById(Long.valueOf(id));

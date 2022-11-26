@@ -123,23 +123,23 @@ public class FilmController {
 
     @GetMapping("/director/{directorId}")
     public List<Film> findFilmOfDirector(@PathVariable Long directorId, @RequestParam String sortBy) {
-        if (sortBy.equals("likes")) {
+        if(sortBy.equals("likes")){
             log.info("GET /films/director/{directorId}?sortBy=likes");
         } else {
             log.info("GET /films/director/{directorId}?sortBy=year");
         }
-        return filmService.findDirectorFilms(directorId, sortBy);
+        return filmService.findDirectorFilms(directorId,sortBy);
     }
 
     @GetMapping("/search")
-    public List<Film> searchFilm(@RequestParam String query, @RequestParam List<String> by) {
+    public List<Film> searchFilm(@RequestParam String query, @RequestParam List<String> by){
         if (by.contains("director") && !by.contains("title")) {
-            return filmService.searchFilmByDirector(query, by);
+            return filmService.searchFilmByDirector(query,by);
         }
         if (!by.contains("director") && by.contains("title")) {
             return filmService.searchFilmByTitle(query, by);
         }
-        return filmService.searchFilmByTitleAndDirector(query, by);
+        return filmService.searchFilmByTitleAndDirector(query,by);
     }
 
 }

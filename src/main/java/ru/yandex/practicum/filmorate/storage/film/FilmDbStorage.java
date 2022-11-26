@@ -8,8 +8,8 @@ import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exception.DirectorNotFoundException;
 import ru.yandex.practicum.filmorate.exception.FilmNotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.storage.director.DirectorStorage;
 import ru.yandex.practicum.filmorate.storage.feed.FeedStorage;
+import ru.yandex.practicum.filmorate.storage.director.DirectorStorage;
 import ru.yandex.practicum.filmorate.storage.genre.GenreStorage;
 import ru.yandex.practicum.filmorate.storage.mpa.MpaStorage;
 
@@ -204,9 +204,7 @@ public class FilmDbStorage implements FilmStorage {
         }
     }
 
-    /**
-     * получение списка общих фильмов
-     */
+    //получение списка общих фильмов
     @Override
     public List<Film> commonFilmsList(Long userId, Long friendId) {
         log.info("Получение списка общих фильмов");
@@ -234,9 +232,7 @@ public class FilmDbStorage implements FilmStorage {
         return list;
     }
 
-    /**
-     * получение списка фильмов по режиссерам
-     */
+
     @Override
     public List<Film> findDirectorFilms(Long directorId, String sort) {
         if (directorStorage.findDirectorById(directorId) != null) {
@@ -266,9 +262,7 @@ public class FilmDbStorage implements FilmStorage {
         return Collections.emptyList();
     }
 
-    /**
-     * поиск популярных фильмов по году
-     */
+    // поиск популярных фильмов по году
     @Override
     public List<Film> findPopularFilms(Integer count, Integer year) {
         String sql = "SELECT f.* " +
@@ -281,9 +275,7 @@ public class FilmDbStorage implements FilmStorage {
         return jdbcTemplate.query(sql, (rs, rowNum) -> makeFilm(rs), year, count);
     }
 
-    /**
-     * поиск популярных фильмов по жанру
-     */
+    // поиск популярных фильмов по жанру
     @Override
     public List<Film> findPopularFilms(Integer count, Long genreId) {
         String sql = "SELECT f.* " +
@@ -297,9 +289,7 @@ public class FilmDbStorage implements FilmStorage {
         return jdbcTemplate.query(sql, (rs, rowNum) -> makeFilm(rs), genreId, count);
     }
 
-    /**
-     * поиск популярных фильмов по году и жанру
-     */
+    // поиск популярных фильмов по году и жанру
     @Override
     public List<Film> findPopularFilms(Integer count, Long genreId, Integer year) {
         String sql = "SELECT f.* " +
@@ -314,9 +304,9 @@ public class FilmDbStorage implements FilmStorage {
 
     }
 
-    /**
-     * поиск фильмов по режиссеру
-     */
+
+
+
     @Override
     public List<Film> searchFilmByDirector(String query, List<String> values) {
         String sql = "select F.*\n" +
@@ -330,9 +320,6 @@ public class FilmDbStorage implements FilmStorage {
         return jdbcTemplate.query(sql, (rs, rowNum) -> makeFilm(rs), query);
     }
 
-    /**
-     * поиск фильмов по названию
-     */
     @Override
     public List<Film> searchFilmByTitle(String query, List<String> values) {
         String sql = "select F.*\n" +
@@ -344,9 +331,6 @@ public class FilmDbStorage implements FilmStorage {
         return jdbcTemplate.query(sql, (rs, rowNum) -> makeFilm(rs), query);
     }
 
-    /**
-     * поиск фильмов по режиссеру и названию
-     */
     @Override
     public List<Film> searchFilmByTitleAndDirector(String query, List<String> values) {
         String sql = "select F.*\n" +
@@ -359,24 +343,6 @@ public class FilmDbStorage implements FilmStorage {
                 "GROUP BY F.ID\n" +
                 "ORDER BY COUNT(USER_ID) desc";
         return jdbcTemplate.query(sql, (rs, rowNum) -> makeFilm(rs), query, query);
-    }
-
-    /**
-     * Метод возвращает отсортированный список фильмов по ID,
-     * то есть в каком порядке были ID, в том же порядке будет и список фильмов
-     */
-    @Override
-    public List<Film> findFilmsByIdsOrdered(List<Long> ids) {
-        StringBuilder valuesSb = new StringBuilder();
-        for (int i = 0; i < ids.size(); i++) {
-            valuesSb.append("(").append(ids.get(i)).append(", ").append(i + 1).append("), ");
-        }
-        String values = valuesSb.substring(0, valuesSb.length() - 2);
-        String sql = String.format("SELECT F.* " +
-                "FROM FILMS F\n" +
-                "JOIN (VALUES %s) AS V (ID, ORDERING) ON F.ID = V.ID\n" +
-                "ORDER BY V.ORDERING;", values);
-        return jdbcTemplate.query(sql, (rs, rowNum) -> makeFilm(rs));
     }
 
     private Film makeFilm(ResultSet rs) throws SQLException {
@@ -432,5 +398,23 @@ public class FilmDbStorage implements FilmStorage {
         String sql = "select user_id from likes where film_id = ?";
 
         return jdbcTemplate.query(sql, (rs, rowNum) -> makeUserId(rs), id);
+    }
+
+    /**
+     * Метод возвращает отсортированный список фильмов по ID,
+     * то есть в каком порядке были ID, в том же порядке будет и список фильмов
+     */
+    @Override
+    public List<Film> findFilmsByIdsOrdered(List<Long> ids) {
+        StringBuilder valuesSb = new StringBuilder();
+        for (int i = 0; i < ids.size(); i++) {
+            valuesSb.append("(").append(ids.get(i)).append(", ").append(i + 1).append("), ");
+        }
+        String values = valuesSb.substring(0, valuesSb.length() - 2);
+        String sql = String.format("SELECT F.* " +
+                                   "FROM FILMS F\n" +
+                                   "JOIN (VALUES %s) AS V (ID, ORDERING) ON F.ID = V.ID\n" +
+                                   "ORDER BY V.ORDERING;", values);
+        return jdbcTemplate.query(sql, (rs, rowNum) -> makeFilm(rs));
     }
 }

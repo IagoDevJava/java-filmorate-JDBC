@@ -213,7 +213,7 @@ public class UserDbStorage implements UserStorage {
     }
 
     private User makeUser(ResultSet rs) throws SQLException {
-        return User.builder()
+        User user = User.builder()
                 .id(rs.getLong("id"))
                 .login(rs.getString("login"))
                 .name(rs.getString("name"))
@@ -221,10 +221,15 @@ public class UserDbStorage implements UserStorage {
                 .birthday(rs.getDate("birthday").toLocalDate())
                 .friends(getIdFriends(rs.getLong("id")))
                 .build();
+
+        if (user == null) {
+            return null;
+        }
+        return user;
     }
 
     private Feed makeFeed(ResultSet rs) throws SQLException {
-        return Feed.builder()
+        Feed feed = Feed.builder()
                 .eventId(rs.getLong("EVENT_ID"))
                 .userId(rs.getLong("USER_ID"))
                 .entityId(rs.getLong("ENTITY_ID"))
@@ -232,9 +237,19 @@ public class UserDbStorage implements UserStorage {
                 .operation(rs.getString("OPERATION"))
                 .timestamp(rs.getLong("CREATE_TIME"))
                 .build();
+
+        if (feed == null) {
+            return null;
+        }
+        return feed;
     }
 
     private Long makeId(ResultSet rs) throws SQLException {
-        return rs.getLong("friend_id");
+        Long l = rs.getLong("friend_id");
+
+        if (l == null) {
+            return null;
+        }
+        return l;
     }
 }
